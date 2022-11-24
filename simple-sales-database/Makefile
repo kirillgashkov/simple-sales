@@ -1,10 +1,14 @@
-create-db:
+create-database:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_database.sql"
-.PHONY: create-db
+.PHONY: create-database
 
-drop-db:
+drop-database:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_database.sql"
-.PHONY: create-db
+.PHONY: drop-database
+
+migrations-create:
+	migrate create -dir "./simple_sales/migrations" -ext sql NAME
+.PHONY: migrations-create
 
 migrations-up:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" up
