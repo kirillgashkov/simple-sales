@@ -1,23 +1,19 @@
-create-database:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_database.sql"
-.PHONY: create-database
-
-drop-database:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_database.sql"
-.PHONY: drop-database
-
-migrations-create:
+new-migration:
 	migrate create -dir "./simple_sales/migrations" -ext sql NAME
-.PHONY: migrations-create
+.PHONY: new-migration
 
-migrations-up:
+migrate:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" up
-.PHONY: migrations-up
+.PHONY: migrate
 
-migrations-down:
-	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" down -all
-.PHONY: migrations-down
-
-migrations-rollback:
+rollback:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" down 1
-.PHONY: migrations-rollback
+.PHONY: rollback
+
+create-db:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_database.sql"
+.PHONY: create-db
+
+drop-db:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_database.sql"
+.PHONY: drop-db
