@@ -17,3 +17,7 @@ create-db:
 drop-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_database.sql"
 .PHONY: drop-db
+
+connect-to-db:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN"
+.PHONY: connect-to-db
