@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS clients (
 
 CREATE TABLE IF NOT EXISTS contacts (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    client_id integer NOT NULL REFERENCES clients (id),
+    client_id uuid NOT NULL REFERENCES clients (id),
     first_name text,
     middle_name text,
     last_name text,
