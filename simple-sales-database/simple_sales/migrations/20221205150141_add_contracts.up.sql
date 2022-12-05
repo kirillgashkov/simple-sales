@@ -8,10 +8,13 @@ CREATE TABLE IF NOT EXISTS contracts (
     CONSTRAINT end_date_after_start_date CHECK (end_date >= start_date)
 );
 
+
 CREATE TABLE IF NOT EXISTS contracts_products (
     contract_number text REFERENCES contracts (number),
     product_serial_number text REFERENCES products (serial_number),
     PRIMARY KEY (contract_number, product_serial_number)
 );
+
+CREATE INDEX IF NOT EXISTS contracts_products_product_serial_number_contract_number_idx ON contracts_products (product_serial_number, contract_number);
 
 COMMIT;
