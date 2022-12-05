@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS cities (
@@ -23,3 +25,5 @@ CREATE TABLE IF NOT EXISTS contacts (
     CONSTRAINT at_least_one_name_or_note CHECK (num_nonnulls(first_name, middle_name, last_name, note) > 0),
     CONSTRAINT at_least_one_contact CHECK (num_nonnulls(phone, email) > 0)
 );
+
+COMMIT;
