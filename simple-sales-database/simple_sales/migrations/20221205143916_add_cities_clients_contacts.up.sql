@@ -22,8 +22,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     phone text,
     email text,
     note text,
-    CONSTRAINT at_least_one_name_or_note CHECK (num_nonnulls(first_name, middle_name, last_name, note) > 0),
-    CONSTRAINT at_least_one_contact CHECK (num_nonnulls(phone, email) > 0)
+    CONSTRAINT at_least_one_name_or_note CHECK (num_nonnulls(first_name, middle_name, last_name, note) > 0)
 );
 
 COMMIT;
