@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS cities (
 CREATE TABLE IF NOT EXISTS clients (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     organization_name text NOT NULL,
-    city_id uuid REFERENCES cities(id)
+    city_id uuid REFERENCES cities (id)
 );
 
 CREATE TABLE IF NOT EXISTS contacts (
