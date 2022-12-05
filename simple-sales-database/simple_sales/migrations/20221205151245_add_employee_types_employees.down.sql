@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP TABLE IF EXISTS employees;
+
+DROP TABLE IF EXISTS employee_types;
+
+COMMIT;
