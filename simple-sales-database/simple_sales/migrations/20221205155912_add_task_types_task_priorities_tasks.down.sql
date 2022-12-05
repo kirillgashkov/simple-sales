@@ -1,0 +1,9 @@
+BEGIN;
+
+DROP TABLE IF EXISTS tasks;
+
+DROP TABLE IF EXISTS task_priorities;
+
+DROP TABLE IF EXISTS task_types;
+
+COMMIT;
