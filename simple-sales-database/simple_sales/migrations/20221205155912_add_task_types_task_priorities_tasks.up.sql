@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS task_types (
 
 CREATE TABLE IF NOT EXISTS task_priorities (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    level integer NOT NULL,
+    level smallint NOT NULL,
     name text NOT NULL
 );
 
