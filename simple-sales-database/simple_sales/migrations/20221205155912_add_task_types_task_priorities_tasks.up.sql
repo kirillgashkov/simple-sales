@@ -8,14 +8,15 @@ CREATE TABLE IF NOT EXISTS task_types (
 
 CREATE TABLE IF NOT EXISTS task_priorities (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    level integer NOT NULL,
     name text NOT NULL
 );
 
-INSERT INTO task_priorities (id, name)
+INSERT INTO task_priorities (id, level, name)
 VALUES
-    ('6260bf47-9df8-4d42-99f8-eb7feb5a3dd2', 'low'),
-    ('897a4f3c-526b-4bd0-9f75-bb79efea9377', 'medium'),
-    ('bb82f92d-cb67-4df8-a613-cab6ee7dd392', 'high')
+    ('6260bf47-9df8-4d42-99f8-eb7feb5a3dd2', 1, 'low'),
+    ('897a4f3c-526b-4bd0-9f75-bb79efea9377', 2, 'medium'),
+    ('bb82f92d-cb67-4df8-a613-cab6ee7dd392', 3, 'high')
 ON CONFLICT DO NOTHING;
 
 
