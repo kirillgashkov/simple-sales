@@ -35,5 +35,5 @@ connect-to-db:
 .PHONY: connect-to-db
 
 dump-db-schema:
-	pg_dump -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" --schema-only > "./simple_sales/schema.sql"
+	pg_dump -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" --schema-only --no-privileges --no-owner > "./simple_sales/schema.sql"
 .PHONY: dump-db-schema
