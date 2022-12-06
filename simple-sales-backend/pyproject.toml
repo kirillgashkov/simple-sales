@@ -12,12 +12,21 @@ typer = {extras = ["all"], version = "^0.7.0"}
 fastapi = "^0.88.0"
 uvicorn = {extras = ["standard"], version = "^0.20.0"}
 
-
 [tool.poetry.group.dev.dependencies]
 black = "^22.10.0"
 isort = "^5.10.1"
 autoflake = "^2.0.0"
 mypy = "^0.991"
+
+[tool.isort]
+profile = "black"
+known_first_party = ["simple_sales"]
+
+[tool.mypy]
+disallow_any_generics = true
+disallow_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
 
 [build-system]
 requires = ["poetry-core"]
