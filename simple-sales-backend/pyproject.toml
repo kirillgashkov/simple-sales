@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "simple-sales"
+version = "0.1.0"
+description = ""
+authors = ["Kirill Gashkov <kirill@gashkov.com>"]
+readme = "README.md"
+packages = [{include = "simple_sales"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+typer = {extras = ["all"], version = "^0.7.0"}
+fastapi = "^0.88.0"
+uvicorn = {extras = ["standard"], version = "^0.20.0"}
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+isort = "^5.10.1"
+autoflake = "^2.0.0"
+mypy = "^0.991"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

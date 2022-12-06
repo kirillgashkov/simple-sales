@@ -8,6 +8,14 @@ services:
     # Development
     ports:
       - "5432:5432"
+  
+  api:
+    build: ./simple-sales-backend
+    env_file: backend.compose.env
+    
+    # Development
+    ports:
+      - "8000:8000"
 
 volumes:
   db-data: {}
