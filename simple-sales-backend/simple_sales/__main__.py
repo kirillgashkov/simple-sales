@@ -1,7 +1,7 @@
 import typer
 import uvicorn
 
-from simple_sales.app import app
+from simple_sales.api.app import app
 
 typer_app = typer.Typer()
 
