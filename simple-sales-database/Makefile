@@ -33,3 +33,7 @@ drop-db:
 connect-to-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN"
 .PHONY: connect-to-db
+
+dump-db-schema:
+	pg_dump -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" --schema-only > "./simple_sales/schema.sql"
+.PHONY: dump-db-schema
