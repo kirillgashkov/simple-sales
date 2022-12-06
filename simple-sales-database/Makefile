@@ -12,7 +12,7 @@ rollback:
 
 down-all:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" down -all
-.PHONY: rollback
+.PHONY: down-all
 
 force:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" force -- $(V)
