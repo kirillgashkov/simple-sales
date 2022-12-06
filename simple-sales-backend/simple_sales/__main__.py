@@ -11,7 +11,7 @@ typer_app.command()(api)
 # Empty callback is needed to prevent Typer from creating a CLI application with a
 # single function as the main CLI application, not as a command/subcommand.
 @typer_app.callback()
-def simple_sales():
+def simple_sales() -> None:
     pass
 
 
