@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     task_type_id uuid NOT NULL REFERENCES task_types (id),
     task_priority_id uuid NOT NULL REFERENCES task_priorities (id),
+    note text,
     
     contact_id uuid NOT NULL REFERENCES contacts (id),
     
