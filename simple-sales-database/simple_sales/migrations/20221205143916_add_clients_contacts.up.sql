@@ -1,13 +1,5 @@
 BEGIN;
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-CREATE TABLE IF NOT EXISTS cities (
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    city_name text NOT NULL,
-    region_name text
-);
-
 CREATE TABLE IF NOT EXISTS clients (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     organization_name text NOT NULL,
@@ -22,6 +14,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     last_name text,
     phone text,
     email text,
+    address_id uuid REFERENCES addresses (id),
     note text,
     CONSTRAINT at_least_one_name_or_note CHECK (num_nonnulls(first_name, middle_name, last_name, note) > 0)
 );
