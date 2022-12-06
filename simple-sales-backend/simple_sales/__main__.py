@@ -1,14 +1,18 @@
 import typer
-import uvicorn
 
-from simple_sales.api.app import app
+from simple_sales.api.__main__ import api
 
 typer_app = typer.Typer()
 
+# See https://github.com/tiangolo/typer/issues/119#issuecomment-657245317.
+typer_app.command()(api)
 
-@typer_app.command()
-def simple_sales() -> None:
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# Empty callback is needed to prevent Typer from creating a CLI application with a
+# single function as the main CLI application, not as a command/subcommand.
+@typer_app.callback()
+def simple_sales():
+    pass
 
 
 if __name__ == "__main__":
