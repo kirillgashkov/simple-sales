@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS addresses (
     city_id uuid NOT NULL REFERENCES cities (id),
     street text NOT NULL,
     house text NOT NULL,
-    apartment text
+    apartment text,
+    note text
 );
 
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS organization_address_id uuid REFERENCES addresses (id);

@@ -3,9 +3,18 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS contracts (
     number text PRIMARY KEY,
     client_id uuid NOT NULL REFERENCES clients (id),
-    start_date date NOT NULL,
-    end_date date NOT NULL,
-    CONSTRAINT end_date_after_start_date CHECK (end_date >= start_date)
+
+    delivery_address_id uuid REFERENCES addresses (id),
+    delivery_from timestamp with time zone,
+    delivery_to timestamp with time zone,
+
+    warranty_from timestamp with time zone,
+    warranty_to timestamp with time zone,
+
+    description text,
+
+    CONSTRAINT contracts_delivery_from_delivery_to_check CHECK (delivery_from <= delivery_to),
+    CONSTRAINT contracts_warranty_from_warranty_to_check CHECK (warranty_from <= warranty_to)
 );
 
 
