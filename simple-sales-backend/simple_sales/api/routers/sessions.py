@@ -1,6 +1,6 @@
-import fastapi
+from fastapi import APIRouter
 
-router = fastapi.APIRouter()
+router = APIRouter()
 
 
 @router.post("/sessions")
