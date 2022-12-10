@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from simple_sales.api.routers import cities, employees, sessions, users
 from simple_sales.api.dependencies.db import db
+from simple_sales.api.routers import cities, employees, sessions, users
 
 app = FastAPI()
 
