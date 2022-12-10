@@ -7,5 +7,5 @@ db = Database(DB_DSN)
 
 
 async def get_db() -> asyncpg.Connection:
-    with db.connection() as conn:
+    async with db.connection() as conn:
         yield conn
