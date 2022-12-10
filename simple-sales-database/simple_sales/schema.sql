@@ -55,8 +55,8 @@ CREATE TABLE public.addresses (
 
 CREATE TABLE public.cities (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    city_name text NOT NULL,
-    region_name text
+    city text NOT NULL,
+    region text
 );
 
 
