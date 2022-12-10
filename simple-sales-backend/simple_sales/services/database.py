@@ -1,3 +1,5 @@
+from contextlib import AbstractAsyncContextManager
+
 import asyncpg
 
 from simple_sales.services.service import Service
@@ -14,6 +16,5 @@ class Database(Service):
     async def stop(self) -> None:
         await self._pool.close()
 
-    async def connection(self) -> asyncpg.Connection:
-        async with self._pool.acquire() as conn:
-            yield conn
+    def connection(self) -> AbstractAsyncContextManager[asyncpg.Connection]:
+        return self._pool.acquire()
