@@ -1,8 +1,7 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from asyncpg import Pool, Record, create_pool
-from asyncpg.pool import PoolConnectionProxy
+from asyncpg import Connection, Pool, create_pool
 
 from simple_sales.services.service import Service
 
@@ -10,7 +9,7 @@ from simple_sales.services.service import Service
 class Database(Service):
     def __init__(self, dsn: str) -> None:
         self.dsn = dsn
-        self._pool: Pool[Record] | None = None
+        self._pool: Pool | None = None
 
     async def start(self) -> None:
         self._pool = await create_pool(self.dsn)
@@ -20,7 +19,7 @@ class Database(Service):
             await self._pool.close()
 
     @asynccontextmanager
-    async def connection(self) -> AsyncIterator["PoolConnectionProxy[Record]"]:
+    async def connection(self) -> AsyncIterator[Connection]:
         if not self._pool:
             raise RuntimeError("Database not started")
 
