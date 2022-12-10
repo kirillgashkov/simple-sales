@@ -1,9 +1,6 @@
 import asyncpg
 
-from simple_sales.services.database import Database
-from simple_sales.settings import DB_DSN
-
-db = Database(DB_DSN)
+from simple_sales.api.app import db
 
 
 async def get_db() -> asyncpg.Connection:
