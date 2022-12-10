@@ -21,4 +21,4 @@ async def get_cities(
     db: "PoolConnectionProxy[Record]" = Depends(get_db),
 ) -> list[CityOut]:
     records = await db.fetch("SELECT id, city, region FROM cities")
-    return [CityOut(**r) for r in records]
+    return [CityOut(**r) for r in records]  # type: ignore  # See #1
