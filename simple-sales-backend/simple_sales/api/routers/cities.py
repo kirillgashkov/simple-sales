@@ -12,7 +12,7 @@ router = APIRouter()
 class CityOut(BaseModel):
     id: UUID
     city: str
-    region: str
+    region: str | None
 
 
 @router.get("/cities", response_model=list[CityOut])
