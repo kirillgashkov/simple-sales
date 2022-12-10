@@ -1,6 +1,7 @@
 from uuid import UUID
 
-import asyncpg
+from asyncpg import Record
+from asyncpg.pool import PoolConnectionProxy
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
@@ -16,6 +17,8 @@ class CityOut(BaseModel):
 
 
 @router.get("/cities", response_model=list[CityOut])
-async def get_cities(db: asyncpg.Connection = Depends(get_db)) -> list[CityOut]:
+async def get_cities(
+    db: "PoolConnectionProxy[Record]" = Depends(get_db),
+) -> list[CityOut]:
     records = await db.fetch("SELECT id, city, region FROM cities")
     return [CityOut(**r) for r in records]
