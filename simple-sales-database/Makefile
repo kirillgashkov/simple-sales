@@ -34,6 +34,8 @@ connect-to-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN"
 .PHONY: connect-to-db
 
+# Note: this dump doesn't include the migration version,
+# although it probably should.
 dump-db-schema:
 	pg_dump -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" --schema-only --no-privileges --no-owner > "./simple_sales/schema.sql"
 .PHONY: dump-db-schema
