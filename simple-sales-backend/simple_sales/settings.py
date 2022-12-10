@@ -14,7 +14,7 @@ def setting(key: str, cast: Callable[[str], T]) -> T:
     ...
 
 
-def setting(key, cast=str):
+def setting(key: str, cast: Callable[[str], T] | Callable[[str], str] = str) -> T | str:
     return cast(os.environ[key])
 
 
