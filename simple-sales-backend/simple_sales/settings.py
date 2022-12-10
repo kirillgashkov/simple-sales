@@ -19,3 +19,5 @@ def setting(key: str, cast: Callable[[str], T] | Callable[[str], str] = str) -> 
 
 
 DB_DSN = setting("SIMPLE_SALES_BACKEND_DB_DSN", str)
+
+API_SESSION_COOKIE_NAME = "sid"
