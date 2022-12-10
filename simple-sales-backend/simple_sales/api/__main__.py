@@ -1,5 +1,5 @@
 import uvicorn
-from typer import Typer, Option
+from typer import Option, Typer
 
 typer_app = Typer()
 
