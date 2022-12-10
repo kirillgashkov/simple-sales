@@ -12,10 +12,10 @@ app.include_router(users.router)
 
 
 @app.on_event("startup")
-async def on_startup():
+async def on_startup() -> None:
     await db.start()
 
 
 @app.on_event("shutdown")
-async def on_shutdown():
+async def on_shutdown() -> None:
     await db.stop()
