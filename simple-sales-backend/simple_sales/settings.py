@@ -18,4 +18,4 @@ def setting(key, cast=str):
     return cast(os.environ[key])
 
 
-DB_DSN = setting("SIMPLE_SALES_DB_DSN", str)
+DB_DSN = setting("SIMPLE_SALES_BACKEND_DB_DSN", str)
