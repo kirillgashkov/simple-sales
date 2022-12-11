@@ -6,11 +6,11 @@ from fastapi import Cookie, Depends
 
 from simple_sales.api.dependencies.db import get_db
 from simple_sales.models.session import Session
-from simple_sales.settings import API_SESSION_COOKIE_NAME
+from simple_sales.settings import API_SESSION_ID_COOKIE_NAME
 
 
 async def get_current_session(
-    session_id: UUID | None = Cookie(None, alias=API_SESSION_COOKIE_NAME),
+    session_id: UUID | None = Cookie(None, alias=API_SESSION_ID_COOKIE_NAME),
     db: Connection = Depends(get_db),
 ) -> Session | None:
     if session_id is None:
