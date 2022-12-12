@@ -43,16 +43,6 @@ async def get_current_session(
     return Session(**session_record)
 
 
-class User(BaseModel):
-    id: UUID
-    username: str
-    employee_id: UUID
-
-
-class PasswordAuthorization(BaseModel):
-    user_id: UUID
-
-
 _not_authenticated_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Not authenticated",
@@ -65,6 +55,10 @@ _incorrect_username_or_password_exception = HTTPException(
     detail="Incorrect username or password",
     headers={"WWW-Authenticate": "Basic"},
 )
+
+
+class PasswordAuthorization(BaseModel):
+    user_id: UUID
 
 
 async def get_current_password_authorization(
@@ -142,6 +136,12 @@ async def _password_authorize_user(
                 ph.hash(password),
                 user_id,
             )
+
+
+class User(BaseModel):
+    id: UUID
+    username: str
+    employee_id: UUID
 
 
 async def get_current_user(
