@@ -178,9 +178,7 @@ CREATE TABLE public.schema_migrations (
 CREATE TABLE public.sessions (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     user_id uuid NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    expires_at timestamp with time zone NOT NULL,
-    CONSTRAINT expires_at_after_created_at CHECK ((expires_at > created_at))
+    expires_at timestamp with time zone NOT NULL
 );
 
 
