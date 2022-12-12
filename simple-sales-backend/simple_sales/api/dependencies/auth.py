@@ -2,7 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 import argon2
-from asyncpg import Connection, Record
+from asyncpg import Connection
 from fastapi import Cookie, Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
