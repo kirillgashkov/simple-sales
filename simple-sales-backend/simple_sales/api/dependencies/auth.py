@@ -85,23 +85,30 @@ async def get_current_password_authorization(
 
 
 async def _password_authorize_user(
-    *, user_id: UUID | None, username: str | None, password: str, db: Connection
+    *,
+    user_id: UUID | None = None,
+    username: str | None = None,
+    password: str,
+    db: Connection,
 ) -> PasswordAuthorization:
     if user_id and username:
         raise ValueError("Cannot specify both user_id and username")
-    if not user_id and not username:
-        raise ValueError("Must specify either user_id or username")
 
     with db.transaction():
 
         # Get user_id and password_hash
 
+        where_clause: str
+        where_clause_arg: UUID | str
+
         if user_id:
             where_clause = "WHERE id = $1"
             where_clause_arg = user_id
-        else:
+        elif username:
             where_clause = "WHERE lower(username) = lower($1)"
             where_clause_arg = username
+        else:
+            raise ValueError("Must specify either user_id or username")
 
         record = await db.fetchrow(
             f"""
@@ -136,6 +143,8 @@ async def _password_authorize_user(
                 ph.hash(password),
                 user_id,
             )
+
+    return PasswordAuthorization(user_id=user_id)
 
 
 class User(BaseModel):
