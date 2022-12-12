@@ -19,11 +19,28 @@ class Session(BaseModel):
     expires_at: datetime
 
 
-def get_current_session(
+async def get_current_session(
     session_id: UUID | None = Cookie(None, alias=API_SESSION_ID_COOKIE_NAME),
     db: Connection = Depends(get_db),
 ) -> Session | None:
-    pass
+    if session_id is None:
+        return None
+
+    session_record = await db.fetchrow(
+        """
+        SELECT id, user_id, expires_at
+        FROM sessions
+        WHERE id = $1 AND expires_at > $2
+        LIMIT 1
+        """,
+        session_id,
+        datetime.utcnow(),
+    )
+
+    if session_record is None:
+        return None
+
+    return Session(**session_record)
 
 
 class User(BaseModel):
