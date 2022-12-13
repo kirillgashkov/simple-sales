@@ -1,11 +1,10 @@
+from uuid import UUID
+
 from asyncpg import Connection
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 
-from simple_sales.api.dependencies.auth import User
-from simple_sales.api.dependencies.auth import (
-    get_current_user as get_current_user_dependency,
-)
+from simple_sales.api.dependencies.auth import get_current_user_id
 from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.routers.cities import CityOut
 from simple_sales.api.routers.employee_types import EmployeeTypeOut
@@ -21,7 +20,7 @@ class UserOut(BaseModel):
 
 @router.get("/users/current", response_model=UserOut)
 async def get_current_user(
-    user: User = Depends(get_current_user_dependency),
+    user_id: UUID = Depends(get_current_user_id),
     db: Connection = Depends(get_db),
 ) -> UserOut:
     user_out_record = await db.fetchrow(
@@ -44,7 +43,7 @@ async def get_current_user(
         WHERE u.id = $1
         LIMIT 1
         """,
-        user.id,
+        user_id,
     )
 
     if user_out_record is None:

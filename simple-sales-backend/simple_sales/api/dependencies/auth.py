@@ -12,21 +12,22 @@ from simple_sales.api.dependencies.db import get_db
 from simple_sales.settings import API_SESSION_ID_COOKIE_NAME
 
 
-class Session(BaseModel):
+class _SessionShallow(BaseModel):
     id: UUID
     user_id: UUID
+    expires_at: datetime
 
 
-async def get_current_session(
+async def _get_current_session(
     session_id: UUID | None = Cookie(None, alias=API_SESSION_ID_COOKIE_NAME),
     db: Connection = Depends(get_db),
-) -> Session | None:
+) -> _SessionShallow | None:
     if session_id is None:
         return None
 
-    session_record = await db.fetchrow(
+    record = await db.fetchrow(
         """
-        SELECT id, user_id
+        SELECT id, user_id, expires_at
         FROM sessions
         WHERE id = $1 AND expires_at > $2
         LIMIT 1
@@ -35,10 +36,19 @@ async def get_current_session(
         datetime.utcnow(),
     )
 
-    if session_record is None:
-        return None
+    return _SessionShallow(**record) if record else None
 
-    return Session(**session_record)
+
+async def get_current_session_id(
+    session: _SessionShallow | None = Depends(_get_current_session),
+) -> UUID | None:
+    return session.id if session else None
+
+
+async def get_current_session_user_id(
+    session: _SessionShallow | None = Depends(_get_current_session),
+) -> UUID | None:
+    return session.user_id if session else None
 
 
 _not_authenticated_exception = HTTPException(
@@ -55,15 +65,11 @@ _incorrect_username_or_password_exception = HTTPException(
 )
 
 
-class PasswordAuthorization(BaseModel):
-    user_id: UUID
-
-
-async def get_current_password_authorization(
+async def get_current_password_authorized_user_id(
     credentials: HTTPBasicCredentials | None = Depends(HTTPBasic(auto_error=False)),
-    session: Session | None = Depends(get_current_session),
+    session: _SessionShallow | None = Depends(_get_current_session),
     db: Connection = Depends(get_db),
-) -> PasswordAuthorization | None:
+) -> UUID | None:
     if not credentials:
         return None
 
@@ -71,15 +77,15 @@ async def get_current_password_authorization(
         if not session:
             raise _incorrect_username_or_password_exception
 
-        password_authorization = await _password_authorize_user(
+        user_id = await _password_authorize_user(
             user_id=session.user_id, password=credentials.password, db=db
         )
     else:
-        password_authorization = await _password_authorize_user(
+        user_id = await _password_authorize_user(
             username=credentials.username, password=credentials.password, db=db
         )
 
-    return password_authorization
+    return user_id
 
 
 async def _password_authorize_user(
@@ -89,7 +95,7 @@ async def _password_authorize_user(
     password: str,
     db: Connection,
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
-) -> PasswordAuthorization:
+) -> UUID:
     if user_id and username:
         raise ValueError("Cannot specify both user_id and username")
 
@@ -123,7 +129,7 @@ async def _password_authorize_user(
         if record is None:
             raise _incorrect_username_or_password_exception
 
-        user_id, password_hash = record
+        fetched_user_id, password_hash = record
 
         # Verify (and if needed rehash) password
 
@@ -140,27 +146,21 @@ async def _password_authorize_user(
                 WHERE id = $2
                 """,
                 ph.hash(password),
-                user_id,
+                fetched_user_id,
             )
 
-    return PasswordAuthorization(user_id=user_id)
+    return fetched_user_id
 
 
-class User(BaseModel):
-    id: UUID
-
-
-async def get_current_user(
-    authorization: (PasswordAuthorization | None) = Depends(
-        get_current_password_authorization
+async def get_current_user_id(
+    password_authorized_user_id: (UUID | None) = Depends(
+        get_current_password_authorized_user_id
     ),
-    session: Session | None = Depends(get_current_session),
-) -> User:
-    if authorization is not None:
-        user_id = authorization.user_id
-    elif session is not None:
-        user_id = session.user_id
+    session_user_id: UUID | None = Depends(get_current_session_user_id),
+) -> UUID:
+    if password_authorized_user_id is not None:
+        return password_authorized_user_id
+    elif session_user_id is not None:
+        return session_user_id
     else:
         raise _not_authenticated_exception
-
-    return User(id=user_id)
