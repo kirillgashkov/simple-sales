@@ -2,14 +2,14 @@ from asyncpg import Connection
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 
+from simple_sales.api.dependencies.auth import User
 from simple_sales.api.dependencies.auth import (
-    User,
     get_current_user as get_current_user_dependency,
 )
 from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.routers.cities import CityOut
-from simple_sales.api.routers.employees import EmployeeOut
 from simple_sales.api.routers.employee_types import EmployeeTypeOut
+from simple_sales.api.routers.employees import EmployeeOut
 
 router = APIRouter()
 
