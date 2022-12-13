@@ -15,17 +15,16 @@ class City(BaseModel):
     region: str | None
 
 
-async def insert_city(name: str, region: str, db: Connection) -> City | None:
-    record = await db.fetchrow(
+async def insert_city(name: str, region: str, db: Connection) -> UUID | None:
+    return await db.fetchval(
         """
         INSERT INTO cities (name, region)
         VALUES ($1, $2)
-        RETURNING id, name, region
+        RETURNING id
         """,
         name,
         region,
     )
-    return City(**record) if record is not None else None
 
 
 async def select_cities(db: Connection) -> list[City]:
