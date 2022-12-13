@@ -2,21 +2,21 @@ new-migration:
 	migrate create -dir "./simple_sales/migrations" -ext sql NAME
 .PHONY: new-migration
 
-migrate:
+_migrate:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" up
-.PHONY: migrate
+.PHONY: _migrate
 
-rollback:
+_rollback:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" down 1
-.PHONY: rollback
+.PHONY: _rollback
 
-down-all:
+_down-all:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" down -all
-.PHONY: down-all
+.PHONY: _down-all
 
-force:
+_force:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" force -- $(V)
-.PHONY: force
+.PHONY: _force
 
 version:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" version
@@ -39,3 +39,15 @@ connect-to-db:
 dump-db-schema:
 	pg_dump -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" --schema-only --no-privileges --no-owner > "./simple_sales/schema.sql"
 .PHONY: dump-db-schema
+
+migrate: _migrate dump-db-schema
+.PHONY: migrate
+
+rollback: _rollback dump-db-schema
+.PHONY: rollback
+
+down-all: _down-all dump-db-schema
+.PHONY: down-all
+
+force: _force dump-db-schema
+.PHONY: force
