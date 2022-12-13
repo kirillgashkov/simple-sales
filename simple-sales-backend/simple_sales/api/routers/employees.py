@@ -3,8 +3,8 @@ from uuid import UUID
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from simple_sales.api.routers.cities import CityOut, CityInByID, CityInByData
-from simple_sales.api.routers.employee_types import EmployeeTypeOut, EmployeeTypeInByID
+from simple_sales.api.routers.cities import CityInByData, CityInByID, CityOut
+from simple_sales.api.routers.employee_types import EmployeeTypeInByID, EmployeeTypeOut
 
 router = APIRouter()
 
