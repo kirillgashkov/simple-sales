@@ -248,7 +248,7 @@ ALTER TABLE ONLY public.addresses
 --
 
 ALTER TABLE ONLY public.cities
-    ADD CONSTRAINT cities_city_region_unique UNIQUE (city, region);
+    ADD CONSTRAINT cities_city_region_unique UNIQUE NULLS NOT DISTINCT (city, region);
 
 
 --
