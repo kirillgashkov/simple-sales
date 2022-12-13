@@ -6,11 +6,11 @@ from pydantic import BaseModel
 
 from simple_sales.api.routers.cities import CityIn, CityInReference, CityOut
 from simple_sales.api.routers.employee_types import (
-    EmployeeType,
     EmployeeTypeInReference,
     EmployeeTypeOut,
 )
 from simple_sales.db.queries.cities import City
+from simple_sales.db.queries.employee_types import EmployeeType
 
 router = APIRouter()
 
