@@ -23,7 +23,7 @@ def insert_employee(
     last_name: str,
     city_id: UUID,
     db: Connection,
-) -> UUID:
+) -> UUID | None:
     return db.fetchval(
         """
         INSERT INTO employees (employee_type_id, first_name, middle_name, last_name, city_id)
