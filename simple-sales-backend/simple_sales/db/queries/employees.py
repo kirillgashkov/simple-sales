@@ -54,7 +54,7 @@ def select_employee_by_id(employee_id: UUID, db: Connection) -> Employee | None:
         FROM employees e
         JOIN employee_types t ON t.id = e.employee_type_id
         JOIN cities c ON c.id = e.city_id
-        WHERE id = $1
+        WHERE e.id = $1
         LIMIT 1
         """,
         employee_id,
