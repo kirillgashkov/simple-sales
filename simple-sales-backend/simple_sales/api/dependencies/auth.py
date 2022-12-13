@@ -15,7 +15,6 @@ from simple_sales.settings import API_SESSION_ID_COOKIE_NAME
 class Session(BaseModel):
     id: UUID
     user_id: UUID
-    expires_at: datetime
 
 
 async def get_current_session(
@@ -27,7 +26,7 @@ async def get_current_session(
 
     session_record = await db.fetchrow(
         """
-        SELECT id, user_id, expires_at
+        SELECT id, user_id
         FROM sessions
         WHERE id = $1 AND expires_at > $2
         LIMIT 1
@@ -149,8 +148,6 @@ async def _password_authorize_user(
 
 class User(BaseModel):
     id: UUID
-    username: str
-    employee_id: UUID
 
 
 async def get_current_user(
@@ -158,7 +155,6 @@ async def get_current_user(
         get_current_password_authorization
     ),
     session: Session | None = Depends(get_current_session),
-    db: Connection = Depends(get_db),
 ) -> User:
     if authorization is not None:
         user_id = authorization.user_id
@@ -167,19 +163,4 @@ async def get_current_user(
     else:
         raise _not_authenticated_exception
 
-    user_record = await db.fetchrow(
-        """
-        SELECT id, username, employee_id
-        FROM users
-        WHERE id = $1
-        LIMIT 1
-        """,
-        user_id,
-    )
-
-    if user_record is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
-
-    return User(**user_record)
+    return User(id=user_id)
