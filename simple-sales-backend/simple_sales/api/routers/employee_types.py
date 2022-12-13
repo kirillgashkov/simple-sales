@@ -14,6 +14,10 @@ class EmployeeTypeOut(BaseModel):
     name: str
 
 
+class EmployeeTypeInReference(BaseModel):
+    id: UUID
+
+
 @router.get("/employee-types", response_model=list[EmployeeTypeOut])
 async def get_employee_types(db: Connection = Depends(get_db)) -> list[EmployeeTypeOut]:
     records = await db.fetch("SELECT id, name FROM employee_types")

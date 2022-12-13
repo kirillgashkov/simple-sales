@@ -15,13 +15,13 @@ class CityOut(BaseModel):
     region: str | None
 
 
-class CityInByID(BaseModel):
-    id: UUID
-
-
-class CityInByData(BaseModel):
+class CityIn(BaseModel):
     city: str
     region: str | None
+
+
+class CityInReference(BaseModel):
+    id: UUID
 
 
 @router.get("/cities", response_model=list[CityOut])
