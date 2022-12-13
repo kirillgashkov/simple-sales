@@ -5,23 +5,9 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from simple_sales.api.dependencies.db import get_db
+from simple_sales.db.queries.employee_types import select_employee_types
 
 router = APIRouter()
-
-
-class EmployeeType(BaseModel):
-    id: UUID
-    name: str
-
-
-async def select_employee_types(db: Connection) -> list[EmployeeType]:
-    records = await db.fetch(
-        """
-        SELECT id, name
-        FROM employee_types
-        """
-    )
-    return [EmployeeType(**r) for r in records]
 
 
 class EmployeeTypeInReference(BaseModel):
