@@ -10,7 +10,7 @@ from simple_sales.api.routers.employee_types import (
     EmployeeTypeInReference,
     EmployeeTypeOut,
 )
-from simple_sales.db.cities import City
+from simple_sales.db.queries.cities import City
 
 router = APIRouter()
 
