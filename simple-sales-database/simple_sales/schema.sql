@@ -244,6 +244,14 @@ ALTER TABLE ONLY public.addresses
 
 
 --
+-- Name: cities cities_city_region_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cities
+    ADD CONSTRAINT cities_city_region_unique UNIQUE (city, region);
+
+
+--
 -- Name: cities cities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -284,6 +292,14 @@ ALTER TABLE ONLY public.contracts_products
 
 
 --
+-- Name: employee_types employee_types_name_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.employee_types
+    ADD CONSTRAINT employee_types_name_unique UNIQUE (name);
+
+
+--
 -- Name: employee_types employee_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -297,6 +313,14 @@ ALTER TABLE ONLY public.employee_types
 
 ALTER TABLE ONLY public.employees
     ADD CONSTRAINT employees_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: product_models product_models_name_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.product_models
+    ADD CONSTRAINT product_models_name_unique UNIQUE (name);
 
 
 --
@@ -332,11 +356,27 @@ ALTER TABLE ONLY public.sessions
 
 
 --
+-- Name: task_priorities task_priorities_name_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.task_priorities
+    ADD CONSTRAINT task_priorities_name_unique UNIQUE (name);
+
+
+--
 -- Name: task_priorities task_priorities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.task_priorities
     ADD CONSTRAINT task_priorities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: task_types task_types_name_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.task_types
+    ADD CONSTRAINT task_types_name_unique UNIQUE (name);
 
 
 --
