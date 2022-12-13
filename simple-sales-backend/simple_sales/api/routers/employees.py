@@ -26,4 +26,4 @@ class EmployeeIn(BaseModel):
     first_name: str
     middle_name: str | None
     last_name: str
-    city: CityInReference | CityIn
+    city: CityIn | CityInReference
