@@ -24,13 +24,13 @@ async def select_employee_types(db: Connection) -> list[EmployeeType]:
     return [EmployeeType(**r) for r in records]
 
 
+class EmployeeTypeInReference(BaseModel):
+    id: UUID
+
+
 class EmployeeTypeOut(BaseModel):
     id: UUID
     name: str
-
-
-class EmployeeTypeInReference(BaseModel):
-    id: UUID
 
 
 @router.get("/employee-types", response_model=list[EmployeeTypeOut])

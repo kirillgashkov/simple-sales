@@ -67,12 +67,6 @@ async def select_city_by_name_and_region(
     return City(**record) if record is not None else None
 
 
-class CityOut(BaseModel):
-    id: UUID
-    name: str
-    region: str | None
-
-
 class CityIn(BaseModel):
     name: str
     region: str | None
@@ -80,6 +74,12 @@ class CityIn(BaseModel):
 
 class CityInReference(BaseModel):
     id: UUID
+
+
+class CityOut(BaseModel):
+    id: UUID
+    name: str
+    region: str | None
 
 
 @router.get("/cities", response_model=list[CityOut])
