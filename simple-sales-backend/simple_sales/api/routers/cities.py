@@ -15,6 +15,15 @@ class CityOut(BaseModel):
     region: str | None
 
 
+class CityInByID(BaseModel):
+    id: UUID
+
+
+class CityInByData(BaseModel):
+    city: str
+    region: str | None
+
+
 @router.get("/cities", response_model=list[CityOut])
 async def get_cities(db: Connection = Depends(get_db)) -> list[CityOut]:
     records = await db.fetch("SELECT id, city, region FROM cities")
