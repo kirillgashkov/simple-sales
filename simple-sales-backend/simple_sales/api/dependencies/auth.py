@@ -8,9 +8,8 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
 
 from simple_sales.api.dependencies.db import get_db
+from simple_sales.api.dependencies.argon2 import get_password_hasher
 from simple_sales.settings import API_SESSION_ID_COOKIE_NAME
-
-ph = argon2.PasswordHasher()
 
 
 class Session(BaseModel):
@@ -90,6 +89,7 @@ async def _password_authorize_user(
     username: str | None = None,
     password: str,
     db: Connection,
+    ph: argon2.PasswordHasher = Depends(get_password_hasher),
 ) -> PasswordAuthorization:
     if user_id and username:
         raise ValueError("Cannot specify both user_id and username")
