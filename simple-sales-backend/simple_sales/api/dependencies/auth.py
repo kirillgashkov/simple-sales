@@ -7,8 +7,8 @@ from fastapi import Cookie, Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
 
-from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.dependencies.argon2 import get_password_hasher
+from simple_sales.api.dependencies.db import get_db
 from simple_sales.settings import API_SESSION_ID_COOKIE_NAME
 
 
