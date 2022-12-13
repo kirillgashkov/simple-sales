@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from simple_sales.api.dependencies.db import get_db
-from simple_sales.db.cities import select_cities
+from simple_sales.db.queries.cities import select_cities
 
 router = APIRouter()
 

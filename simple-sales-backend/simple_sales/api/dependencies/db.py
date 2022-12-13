@@ -2,7 +2,7 @@ from collections.abc import AsyncIterator
 
 from asyncpg import Connection
 
-from simple_sales.services.database import Database
+from simple_sales.db.database import Database
 from simple_sales.settings import DB_DSN
 
 db = Database(DB_DSN)

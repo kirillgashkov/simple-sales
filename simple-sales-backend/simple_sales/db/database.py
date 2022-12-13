@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from asyncpg import Connection, Pool, create_pool
 
-from simple_sales.services.service import Service
+from simple_sales.service import Service
 
 
 class Database(Service):
