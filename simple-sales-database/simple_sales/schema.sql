@@ -55,7 +55,7 @@ CREATE TABLE public.addresses (
 
 CREATE TABLE public.cities (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    city text NOT NULL,
+    name text NOT NULL,
     region text
 );
 
@@ -244,11 +244,11 @@ ALTER TABLE ONLY public.addresses
 
 
 --
--- Name: cities cities_city_region_unique; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: cities cities_name_region_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.cities
-    ADD CONSTRAINT cities_city_region_unique UNIQUE NULLS NOT DISTINCT (city, region);
+    ADD CONSTRAINT cities_name_region_unique UNIQUE NULLS NOT DISTINCT (name, region);
 
 
 --
