@@ -94,7 +94,7 @@ async def _password_authorize_user(
     if user_id and username:
         raise ValueError("Cannot specify both user_id and username")
 
-    with db.transaction():
+    async with db.transaction():
 
         # Get user_id and password_hash
 
