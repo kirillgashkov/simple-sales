@@ -1,7 +1,7 @@
 BEGIN;
 
 ALTER TABLE cities DROP CONSTRAINT IF EXISTS cities_city_region_unique;
-ALTER TABLE cities ADD CONSTRAINT cities_city_region_unique UNIQUE (city, region);
+ALTER TABLE cities ADD CONSTRAINT cities_city_region_unique UNIQUE NULLS NOT DISTINCT (city, region);
 
 ALTER TABLE employee_types DROP CONSTRAINT IF EXISTS employee_types_name_unique;
 ALTER TABLE employee_types ADD CONSTRAINT employee_types_name_unique UNIQUE (name);
