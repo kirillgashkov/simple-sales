@@ -9,6 +9,7 @@ from simple_sales.api.dependencies.auth import (
 from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.routers.cities import CityOut
 from simple_sales.api.routers.employees import EmployeeOut
+from simple_sales.api.routers.employee_types import EmployeeTypeOut
 
 router = APIRouter()
 
@@ -27,7 +28,8 @@ async def get_current_user(
         """
         SELECT
             e.id,
-            t.name as employee_type,
+            t.id as employee_type_id,
+            t.name as employee_type_name,
             e.first_name,
             e.middle_name,
             e.last_name,
@@ -53,7 +55,10 @@ async def get_current_user(
         username=user.username,
         employee=EmployeeOut(
             id=employee_out_record["id"],
-            employee_type=employee_out_record["employee_type"],
+            employee_type=EmployeeTypeOut(
+                id=employee_out_record["employee_type_id"],
+                name=employee_out_record["employee_type_name"],
+            ),
             first_name=employee_out_record["first_name"],
             middle_name=employee_out_record["middle_name"],
             last_name=employee_out_record["last_name"],
