@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS employee_types (
 INSERT INTO employee_types (id, name)
 VALUES
     ('4cf1d446-8624-4176-9121-18c3b0cca623', 'manager'),
-    ('fb6b4665-556b-4a12-b7f0-333f73ca6f16', 'salesman')
+    ('fb6b4665-556b-4a12-b7f0-333f73ca6f16', 'salesperson')
 ON CONFLICT DO NOTHING;
 
 
