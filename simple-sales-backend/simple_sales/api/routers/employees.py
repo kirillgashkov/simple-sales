@@ -12,6 +12,14 @@ from simple_sales.api.routers.employee_types import (
 router = APIRouter()
 
 
+class EmployeeIn(BaseModel):
+    employee_type: EmployeeTypeInReference
+    first_name: str
+    middle_name: str | None
+    last_name: str
+    city: CityIn | CityInReference
+
+
 class EmployeeOut(BaseModel):
     id: UUID
     employee_type: EmployeeTypeOut
@@ -19,11 +27,3 @@ class EmployeeOut(BaseModel):
     middle_name: str | None
     last_name: str
     city: CityOut
-
-
-class EmployeeIn(BaseModel):
-    employee_type: EmployeeTypeInReference
-    first_name: str
-    middle_name: str | None
-    last_name: str
-    city: CityIn | CityInReference
