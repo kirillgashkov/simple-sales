@@ -4,12 +4,13 @@ from asyncpg import Connection
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from simple_sales.api.routers.cities import City, CityIn, CityInReference, CityOut
+from simple_sales.api.routers.cities import CityIn, CityInReference, CityOut
 from simple_sales.api.routers.employee_types import (
     EmployeeType,
     EmployeeTypeInReference,
     EmployeeTypeOut,
 )
+from simple_sales.db.cities import City
 
 router = APIRouter()
 
