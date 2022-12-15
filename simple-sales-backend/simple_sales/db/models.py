@@ -67,7 +67,7 @@ class EmployeeType(BaseModel):
 
 class Employee(BaseModel):
     id: UUID
-    employee_type_id: UUID
+    employee_type: EmployeeType
     first_name: str
     middle_name: str | None
     last_name: str
