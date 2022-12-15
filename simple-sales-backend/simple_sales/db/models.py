@@ -90,7 +90,7 @@ class Task(BaseModel):
     task_type: TaskType
     task_priority: TaskPriority
     note: str | None
-    contact_id: UUID
+    contact: Contact
     contract_number: str | None
     product_serial_number: str | None
     created_at: datetime
