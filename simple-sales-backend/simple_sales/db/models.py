@@ -34,7 +34,7 @@ class Contact(BaseModel):
     last_name: str | None
     phone: str | None
     email: str | None
-    address_id: UUID | None
+    address: Address | None
     note: str | None
 
 
@@ -51,7 +51,7 @@ class Product(BaseModel):
 class Contract(BaseModel):
     number: str
     client_id: UUID
-    delivery_address_id: UUID | None
+    delivery_address: Address | None
     delivery_from: datetime | None
     delivery_to: datetime | None
     warranty_from: datetime | None
