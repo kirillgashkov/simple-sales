@@ -15,10 +15,10 @@ class User(BaseModel):
     employee: Employee
 
 
-def insert_user(
+async def insert_user(
     username: str, password_hash: str, employee_id: UUID, db: Connection
 ) -> UUID | None:
-    return db.fetchval(
+    return await db.fetchval(
         """
         INSERT INTO users (username, password_hash, employee_id)
         VALUES ($1, $2, $3)
@@ -30,8 +30,8 @@ def insert_user(
     )
 
 
-def select_user_by_id(user_id: UUID, db: Connection) -> User | None:
-    record = db.fetchrow(
+async def select_user_by_id(user_id: UUID, db: Connection) -> User | None:
+    record = await db.fetchrow(
         """
         SELECT
             u.id,
@@ -58,8 +58,8 @@ def select_user_by_id(user_id: UUID, db: Connection) -> User | None:
     return _make_user(record) if record else None
 
 
-def select_user_by_username(username: str, db: Connection) -> User | None:
-    record = db.fetchrow(
+async def select_user_by_username(username: str, db: Connection) -> User | None:
+    record = await db.fetchrow(
         """
         SELECT
             u.id,
@@ -86,8 +86,8 @@ def select_user_by_username(username: str, db: Connection) -> User | None:
     return _make_user(record) if record else None
 
 
-def exists_user_by_username(username: str, db: Connection) -> bool:
-    return db.fetchval(
+async def exists_user_by_username(username: str, db: Connection) -> bool:
+    return await db.fetchval(
         """
         SELECT EXISTS (
             SELECT 1

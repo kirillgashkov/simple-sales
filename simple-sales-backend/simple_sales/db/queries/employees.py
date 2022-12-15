@@ -16,7 +16,7 @@ class Employee(BaseModel):
     city: City
 
 
-def insert_employee(
+async def insert_employee(
     employee_type_id: UUID,
     first_name: str,
     middle_name: str | None,
@@ -24,7 +24,7 @@ def insert_employee(
     city_id: UUID,
     db: Connection,
 ) -> UUID | None:
-    return db.fetchval(
+    return await db.fetchval(
         """
         INSERT INTO employees (employee_type_id, first_name, middle_name, last_name, city_id)
         VALUES ($1, $2, $3, $4, $5)
@@ -38,8 +38,8 @@ def insert_employee(
     )
 
 
-def select_employee_by_id(employee_id: UUID, db: Connection) -> Employee | None:
-    record = db.fetchrow(
+async def select_employee_by_id(employee_id: UUID, db: Connection) -> Employee | None:
+    record = await db.fetchrow(
         """
         SELECT
             e.id,
