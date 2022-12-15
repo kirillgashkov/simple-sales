@@ -91,7 +91,7 @@ class Task(BaseModel):
     task_priority: TaskPriority
     note: str | None
     contact: Contact
-    contract_number: str | None
+    contract: Contract | None
     product_serial_number: str | None
     created_at: datetime
     due_at: datetime | None
