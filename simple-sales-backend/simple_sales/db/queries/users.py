@@ -86,6 +86,20 @@ def select_user_by_username(username: str, db: Connection) -> User | None:
     return _make_user(record) if record else None
 
 
+def exists_user_by_username(username: str, db: Connection) -> bool:
+    return db.fetchval(
+        """
+        SELECT EXISTS (
+            SELECT 1
+            FROM users u
+            WHERE lower(u.username) = lower($1)
+            LIMIT 1
+        )
+        """,
+        username,
+    )
+
+
 def _make_user(record: Record) -> User:
     employee_type = EmployeeType(
         id=record["employee_type_id"],
