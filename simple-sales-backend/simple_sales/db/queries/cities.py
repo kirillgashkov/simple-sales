@@ -10,7 +10,7 @@ class City(BaseModel):
     region: str | None
 
 
-async def insert_city(name: str, region: str, db: Connection) -> UUID | None:
+async def insert_city(name: str, region: str | None, db: Connection) -> UUID | None:
     return await db.fetchval(
         """
         INSERT INTO cities (name, region)
