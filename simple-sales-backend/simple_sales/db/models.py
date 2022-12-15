@@ -4,6 +4,12 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
+class City(BaseModel):
+    id: UUID
+    name: str
+    region: str | None
+
+
 class Address(BaseModel):
     id: UUID
     postal_code: str
@@ -12,12 +18,6 @@ class Address(BaseModel):
     house: str
     apartment: str | None
     note: str | None
-
-
-class City(BaseModel):
-    id: UUID
-    name: str
-    region: str | None
 
 
 class Client(BaseModel):
@@ -36,6 +36,16 @@ class Contact(BaseModel):
     email: str | None
     address_id: UUID | None
     note: str | None
+
+
+class ProductModel(BaseModel):
+    id: UUID
+    name: str
+
+
+class Product(BaseModel):
+    serial_number: str
+    product_model_id: UUID
 
 
 class Contract(BaseModel):
@@ -62,22 +72,6 @@ class Employee(BaseModel):
     middle_name: str | None
     last_name: str
     city_id: UUID
-
-
-class ProductModel(BaseModel):
-    id: UUID
-    name: str
-
-
-class Product(BaseModel):
-    serial_number: str
-    product_model_id: UUID
-
-
-class Session(BaseModel):
-    id: UUID
-    user_id: UUID
-    expires_at: datetime
 
 
 class TaskPriority(BaseModel):
@@ -111,3 +105,9 @@ class User(BaseModel):
     username: str
     password_hash: str
     employee_id: UUID
+
+
+class Session(BaseModel):
+    id: UUID
+    user_id: UUID
+    expires_at: datetime
