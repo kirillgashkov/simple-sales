@@ -87,8 +87,8 @@ class TaskType(BaseModel):
 
 class Task(BaseModel):
     id: UUID
-    task_type_id: UUID
-    task_priority_id: UUID
+    task_type: TaskType
+    task_priority: TaskPriority
     note: str | None
     contact_id: UUID
     contract_number: str | None
