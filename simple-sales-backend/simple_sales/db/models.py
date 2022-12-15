@@ -28,7 +28,7 @@ class Client(BaseModel):
 
 class Contact(BaseModel):
     id: UUID
-    client_id: UUID
+    client: Client
     first_name: str | None
     middle_name: str | None
     last_name: str | None
@@ -50,7 +50,7 @@ class Product(BaseModel):
 
 class Contract(BaseModel):
     number: str
-    client_id: UUID
+    client: Client
     delivery_address: Address | None
     delivery_from: datetime | None
     delivery_to: datetime | None
