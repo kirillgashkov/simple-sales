@@ -45,7 +45,7 @@ class ProductModel(BaseModel):
 
 class Product(BaseModel):
     serial_number: str
-    product_model_id: UUID
+    product_model: ProductModel
 
 
 class Contract(BaseModel):
