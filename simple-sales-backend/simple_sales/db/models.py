@@ -96,15 +96,15 @@ class Task(BaseModel):
     created_at: datetime
     due_at: datetime | None
     completed_at: datetime | None
-    created_by: UUID
-    assigned_to: UUID | None
+    created_by: Employee
+    assigned_to: Employee | None
 
 
 class User(BaseModel):
     id: UUID
     username: str
     password_hash: str
-    employee_id: UUID
+    employee: Employee
 
 
 class Session(BaseModel):
