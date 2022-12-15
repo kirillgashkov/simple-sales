@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from asyncpg import Connection
+from asyncpg import Connection, Record
 from pydantic import BaseModel
 
 from simple_sales.db.queries.cities import City
@@ -55,10 +55,38 @@ def select_user_by_id(user_id: UUID, db: Connection) -> User | None:
         """,
         user_id,
     )
+    return _make_user(record) if record else None
 
-    if record is None:
-        return None
 
+def select_user_by_username(username: str, db: Connection) -> User | None:
+    record = db.fetchrow(
+        """
+        SELECT
+            u.id,
+            u.username,
+            u.password_hash,
+            e.id AS employee_id,
+            t.id AS employee_type_id,
+            t.name AS employee_type_name,
+            e.first_name,
+            e.middle_name,
+            e.last_name,
+            c.id AS city_id,
+            c.name AS city_name,
+            c.region AS city_region
+        FROM users u
+        JOIN employees e ON e.id = u.employee_id
+        JOIN employee_types t ON t.id = e.employee_type_id
+        JOIN cities c ON c.id = e.city_id
+        WHERE lower(u.username) = lower($1)
+        LIMIT 1
+        """,
+        username,
+    )
+    return _make_user(record) if record else None
+
+
+def _make_user(record: Record) -> User:
     employee_type = EmployeeType(
         id=record["employee_type_id"],
         name=record["employee_type_name"],
