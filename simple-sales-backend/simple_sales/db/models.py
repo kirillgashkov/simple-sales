@@ -57,7 +57,7 @@ class Contract(BaseModel):
     warranty_from: datetime | None
     warranty_to: datetime | None
     description: str | None
-    product_serial_numbers: list[str]
+    products: list[Product]
 
 
 class EmployeeType(BaseModel):
@@ -92,7 +92,7 @@ class Task(BaseModel):
     note: str | None
     contact: Contact
     contract: Contract | None
-    product_serial_number: str | None
+    product: Product | None
     created_at: datetime
     due_at: datetime | None
     completed_at: datetime | None
