@@ -13,7 +13,7 @@ class City(BaseModel):
 class Address(BaseModel):
     id: UUID
     postal_code: str
-    city_id: UUID
+    city: City
     street: str
     house: str
     apartment: str | None
@@ -23,7 +23,7 @@ class Address(BaseModel):
 class Client(BaseModel):
     id: UUID
     organization_name: str
-    city_id: UUID | None
+    city: City | None
 
 
 class Contact(BaseModel):
@@ -71,7 +71,7 @@ class Employee(BaseModel):
     first_name: str
     middle_name: str | None
     last_name: str
-    city_id: UUID
+    city: City
 
 
 class TaskPriority(BaseModel):
