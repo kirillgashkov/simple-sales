@@ -19,7 +19,7 @@ async def select_or_insert_city(db: Connection, *, name: str, region: str) -> Ci
     if city:
         return city
 
-    await _insert_city_only_on_conflict_do_nothing(db, name=name, region=region)
+    await _execute_insert_city_on_conflict_do_nothing(db, name=name, region=region)
 
     city = await _select_city(db, name=name, region=region)
     if not city:
@@ -45,7 +45,7 @@ async def _select_city(db: Connection, *, name: str, region: str) -> City | None
     return City(**row)
 
 
-async def _insert_city_only_on_conflict_do_nothing(
+async def _execute_insert_city_on_conflict_do_nothing(
     db: Connection, *, name: str, region: str
 ) -> None:
     await db.execute(
