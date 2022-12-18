@@ -15,7 +15,7 @@ async def select_employees(
     *,
     employee_type_id: UUID | None = None,
 ) -> list[Employee]:
-    query, params = _build_employee_select_query(
+    query, params = _build_select_employees_query(
         where_employee_type_id_equals=employee_type_id,
     )
 
@@ -29,7 +29,7 @@ async def select_employee(
     *,
     employee_id: UUID,
 ) -> Employee | None:
-    query, params = _build_employee_select_query(
+    query, params = _build_select_employees_query(
         where_employee_id_equals=employee_id,
         limit=1,
     )
@@ -73,7 +73,7 @@ async def insert_employee(
     return employee
 
 
-def _build_employee_select_query(
+def _build_select_employees_query(
     *,
     where_employee_id_equals: UUID | None = None,
     where_employee_type_id_equals: UUID | None = None,
