@@ -9,7 +9,6 @@ from simple_sales.api.dependencies.argon2 import get_password_hasher
 from simple_sales.api.dependencies.auth import get_current_user_id
 from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.routers.employees import EmployeeIn, EmployeeOut
-from simple_sales.db.queries.users import User
 
 router = APIRouter()
 
@@ -106,23 +105,23 @@ async def get_current_user(
     raise NotImplementedError()
 
 
-def _make_user_out(user: User) -> UserOut:
-    # return UserOut(
-    #     username=user.username,
-    #     employee=EmployeeOut(
-    #         id=user.employee.id,
-    #         first_name=user.employee.first_name,
-    #         middle_name=user.employee.middle_name,
-    #         last_name=user.employee.last_name,
-    #         employee_type=EmployeeTypeOut(
-    #             id=user.employee.employee_type.id,
-    #             name=user.employee.employee_type.name,
-    #         ),
-    #         city=CityOut(
-    #             id=user.employee.city.id,
-    #             name=user.employee.city.name,
-    #             region=user.employee.city.region,
-    #         ),
-    #     ),
-    # )
-    raise NotImplementedError()
+# def _make_user_out(user: User) -> UserOut:
+#     return UserOut(
+#         username=user.username,
+#         employee=EmployeeOut(
+#             id=user.employee.id,
+#             first_name=user.employee.first_name,
+#             middle_name=user.employee.middle_name,
+#             last_name=user.employee.last_name,
+#             employee_type=EmployeeTypeOut(
+#                 id=user.employee.employee_type.id,
+#                 name=user.employee.employee_type.name,
+#             ),
+#             city=CityOut(
+#                 id=user.employee.city.id,
+#                 name=user.employee.city.name,
+#                 region=user.employee.city.region,
+#             ),
+#         ),
+#     )
+#     raise NotImplementedError()
