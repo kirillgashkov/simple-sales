@@ -11,6 +11,7 @@ async def select_cities(db: Connection) -> list[City]:
         FROM cities
         """
     )
+
     return [City(**row) for row in rows]
 
 
