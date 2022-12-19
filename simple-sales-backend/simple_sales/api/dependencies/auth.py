@@ -13,12 +13,12 @@ from simple_sales.db.queries.sessions import select_session
 from simple_sales.db.queries.users import select_user, update_user
 from simple_sales.settings import API_SESSION_ID_COOKIE_NAME
 
-_AUTHENTICATE_HEADER = {"WWW-Authenticate": "Basic"}
+_AUTHENTICATE_HEADERS = {"WWW-Authenticate": "Basic"}
 
 _INVALID_USERNAME_OR_PASSWORD_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Invalid username or password",
-    headers=_AUTHENTICATE_HEADER,
+    headers=_AUTHENTICATE_HEADERS,
 )
 
 _INVALID_SESSION_ID_EXCEPTION = HTTPException(
@@ -29,13 +29,13 @@ _INVALID_SESSION_ID_EXCEPTION = HTTPException(
 _CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Credentials and session ID match different users",
-    headers=_AUTHENTICATE_HEADER,
+    headers=_AUTHENTICATE_HEADERS,
 )
 
 _NOT_AUTHENTICATED_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Not authenticated",
-    headers=_AUTHENTICATE_HEADER,
+    headers=_AUTHENTICATE_HEADERS,
 )
 
 
