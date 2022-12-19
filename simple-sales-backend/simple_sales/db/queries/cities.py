@@ -15,7 +15,21 @@ async def select_cities(db: Connection) -> list[City]:
     return [City(**row) for row in rows]
 
 
-async def select_city(db: Connection, *, name: str, region: str) -> City | None:
+async def select_or_insert_city(db: Connection, *, name: str, region: str) -> City:
+    city = await _select_city(db, name=name, region=region)
+    if city:
+        return city
+
+    await _execute_insert_city_on_conflict_do_nothing(db, name=name, region=region)
+
+    city = await _select_city(db, name=name, region=region)
+    if not city:
+        raise SelectDidNotReturnAfterInsertError()
+
+    return city
+
+
+async def _select_city(db: Connection, *, name: str, region: str) -> City | None:
     row = await db.fetchrow(
         """
         SELECT id, name, region
@@ -32,20 +46,15 @@ async def select_city(db: Connection, *, name: str, region: str) -> City | None:
     return City(**row)
 
 
-async def insert_city_on_conflict_do_nothing(
+async def _execute_insert_city_on_conflict_do_nothing(
     db: Connection, *, name: str, region: str
-) -> City | None:
-    row = await db.fetchrow(
+) -> None:
+    await db.execute(
         """
         INSERT INTO cities (name, region)
         VALUES ($1, $2)
         ON CONFLICT DO NOTHING
-        RETURNING id, name, region
         """,
         name,
         region,
     )
-    if not row:
-        return None
-
-    return City(**row)
