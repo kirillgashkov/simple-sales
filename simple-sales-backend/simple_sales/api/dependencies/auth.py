@@ -15,24 +15,24 @@ from simple_sales.settings import API_SESSION_ID_COOKIE_NAME
 
 _AUTHENTICATE_HEADER = {"WWW-Authenticate": "Basic"}
 
-_INVALID_USERNAME_OR_PASSWORD_HTTP_EXCEPTION = HTTPException(
+_INVALID_USERNAME_OR_PASSWORD_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Invalid username or password",
     headers=_AUTHENTICATE_HEADER,
 )
 
-_INVALID_SESSION_ID_HTTP_EXCEPTION = HTTPException(
+_INVALID_SESSION_ID_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Invalid session ID",
 )
 
-_CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_HTTP_EXCEPTION = HTTPException(
+_CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Credentials and session ID match different users",
     headers=_AUTHENTICATE_HEADER,
 )
 
-_NOT_AUTHENTICATED_HTTP_EXCEPTION = HTTPException(
+_NOT_AUTHENTICATED_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Not authenticated",
     headers=_AUTHENTICATE_HEADER,
@@ -58,7 +58,7 @@ async def get_current_session(
     session = await _get_session_if_valid(session_id=session_id, db=db)
 
     if not session:
-        raise _INVALID_SESSION_ID_HTTP_EXCEPTION
+        raise _INVALID_SESSION_ID_EXCEPTION
 
     return session
 
@@ -81,7 +81,7 @@ async def get_current_user(
 
     if credentials and session:
         if password_authorized_user.id != session.user.id:
-            raise _CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_HTTP_EXCEPTION
+            raise _CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_EXCEPTION
 
     if credentials:
         return password_authorized_user
@@ -89,7 +89,7 @@ async def get_current_user(
     if session:
         return session.user
 
-    raise _NOT_AUTHENTICATED_HTTP_EXCEPTION
+    raise _NOT_AUTHENTICATED_EXCEPTION
 
 
 async def _get_password_authorized_user(
@@ -98,12 +98,12 @@ async def _get_password_authorized_user(
     user = await select_user(db, username=credentials.username)
 
     if not user:
-        raise _INVALID_USERNAME_OR_PASSWORD_HTTP_EXCEPTION
+        raise _INVALID_USERNAME_OR_PASSWORD_EXCEPTION
 
     try:
         ph.verify(user.password_hash, credentials.password)
     except argon2.exceptions.VerifyMismatchError:
-        raise _INVALID_USERNAME_OR_PASSWORD_HTTP_EXCEPTION
+        raise _INVALID_USERNAME_OR_PASSWORD_EXCEPTION
 
     if ph.check_needs_rehash(user.password_hash):
         user = await update_user(
