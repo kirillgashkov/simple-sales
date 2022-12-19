@@ -104,7 +104,12 @@ class User(BaseModel):
     id: UUID
     username: str
     password_hash: str
-    employee_id: UUID
+    employee: Employee
+
+
+class UserPasswordHash(BaseModel):
+    user_id: UUID
+    password_hash: str
 
 
 class Session(BaseModel):

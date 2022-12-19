@@ -1,36 +1,84 @@
-from typing import Any
 from uuid import UUID
 
-from asyncpg import Connection, Record, exceptions
+from asyncpg import Connection, exceptions
 
 from simple_sales.db.errors import (
     InsertDidNotReturnError,
+    SelectDidNotReturnAfterInsertError,
     UpdateDidNotReturnError,
+    SelectDidNotReturnAfterUpdateError,
     UsernameAlreadyExistsError,
 )
-from simple_sales.db.models import User
+from simple_sales.db.models import User, UserPasswordHash, Employee, EmployeeType, City
 
 
-async def select_user(
-    db: Connection,
-    *,
-    user_id: UUID | None = None,
-    username: str | None = None,
-) -> User | None:
-    if not user_id and not username:
-        raise ValueError("Must specify user_id or username")
-
-    query, params = _build_select_users_query(
-        where_user_id_equals=user_id,
-        where_username_equals=username,
-        limit=1,
+async def select_user_password_hash_by_username(
+    db: Connection, *, username: str
+) -> UserPasswordHash | None:
+    row = await db.fetchrow(
+        """
+        SELECT id, password_hash
+        FROM users
+        WHERE lower(username) = lower($1)
+        """,
+        username,
     )
-    row = await db.fetchrow(query, *params)
-
     if not row:
         return None
 
-    return _user_from_row(row)
+    return UserPasswordHash(
+        id=row["id"],
+        password_hash=row["password_hash"],
+    )
+
+
+async def select_user(db: Connection, *, user_id: str) -> User | None:
+    row = await db.fetchrow(
+        """
+        SELECT
+            users.id,
+            users.username,
+            users.password_hash,
+            users.employee_id,
+            employees_types.id AS employee_type_id,
+            employees_types.name AS employee_type_name,
+            employees.first_name AS employee_first_name,
+            employees.middle_name AS employee_middle_name,
+            employees.last_name AS employee_last_name,
+            cities.id AS city_id,
+            cities.name AS city_name,
+            cities.region AS city_region
+        FROM users
+        JOIN employees ON employees.id = users.employee_id
+        JOIN employee_types ON employee_types.id = employees.employee_type_id
+        JOIN cities ON cities.id = employees.city_id
+        WHERE id = $1
+        """,
+        user_id,
+    )
+    if not row:
+        return None
+
+    return User(
+        id=row["id"],
+        username=row["username"],
+        password_hash=row["password_hash"],
+        employee=Employee(
+            id=row["employee_id"],
+            employee_type=EmployeeType(
+                id=row["employee_type_id"],
+                name=row["employee_type_name"],
+            ),
+            first_name=row["employee_first_name"],
+            middle_name=row["employee_middle_name"],
+            last_name=row["employee_last_name"],
+            city=City(
+                id=row["city_id"],
+                name=row["city_name"],
+                region=row["city_region"],
+            ),
+        ),
+    )
 
 
 async def insert_user(
@@ -38,154 +86,129 @@ async def insert_user(
     *,
     username: str,
     password_hash: str,
-    employee_id: UUID,
+    employee_type_id: UUID,
+    employee_first_name: str,
+    employee_middle_name: str,
+    employee_last_name: str,
+    city_id: UUID,
 ) -> User:
     query, *params = (
         """
-        INSERT INTO users (username, password_hash, employee_id)
-        VALUES ($1, $2, $3)
-        RETURNING id, username, password_hash, employee_id
+        INSERT INTO users (
+            username,
+            password_hash,
+            employee_id
+        )
+        VALUES ($1, $2, (
+            INSERT INTO employees (
+                employee_type_id,
+                first_name,
+                middle_name,
+                last_name,
+                city_id
+            )
+            VALUES ($3, $4, $5, $6, $7)
+            RETURNING id
+        ))
+        RETURNING id
         """,
         username,
         password_hash,
-        employee_id,
+        employee_type_id,
+        employee_first_name,
+        employee_middle_name,
+        employee_last_name,
+        city_id,
     )
 
     try:
-        row = await db.fetchrow(query, *params)
+        user_id = await db.fetchval(query, *params)
     except exceptions.UniqueViolationError as e:
         if e.constraint_name == "users_username_lower_idx":
             raise UsernameAlreadyExistsError(username)
-        else:
-            raise
+        raise
 
-    if not row:
+    if not user_id:
         raise InsertDidNotReturnError()
 
-    return _user_from_row(row)
+    user = select_user(db, user_id=user_id)
+    if not user:
+        raise SelectDidNotReturnAfterInsertError()
+
+    return user
 
 
 async def update_user(
     db: Connection,
     *,
     user_id: UUID,
-    new_username: str | None = None,
-    new_password_hash: str | None = None,
+    username: str,
+    employee_type_id: UUID,
+    employee_first_name: str,
+    employee_middle_name: str,
+    employee_last_name: str,
+    city_id: UUID,
 ) -> User:
-    if not new_username and not new_password_hash:
-        raise ValueError("Must specify at least one field to update")
+    async with db.transaction():
+        query, *params = (
+            """
+            UPDATE users
+            SET username = $1
+            WHERE id = $2
+            RETURNING id, employee_id
+            """,
+            username,
+            user_id,
+        )
 
-    query, params = _build_update_users_query(
-        set_username=new_username,
-        set_password_hash=new_password_hash,
-        where_user_id_equals=user_id,
-    )
-    row = await db.fetchrow(query, *params)
+        try:
+            row = await db.fetchrow(query, *params)
+        except exceptions.UniqueViolationError as e:
+            if e.constraint_name == "users_username_lower_idx":
+                raise UsernameAlreadyExistsError(username)
+            raise
 
-    if not row:
-        raise UpdateDidNotReturnError()
+        if not row:
+            raise UpdateDidNotReturnError()
 
-    return _user_from_row(row)
+        returned_user_id = row["id"]
+        returned_employee_id = row["employee_id"]
+
+        row = await db.fetchrow(
+            """
+            UPDATE employees
+            SET employee_type_id = $1, first_name = $2, middle_name = $3, last_name = $4, city_id = $5
+            WHERE id = $6
+            RETURNING 1
+            """,
+            employee_type_id,
+            employee_first_name,
+            employee_middle_name,
+            employee_last_name,
+            city_id,
+            returned_employee_id,
+        )
+        if not row:
+            raise UpdateDidNotReturnError()
+
+        user = select_user(db, user_id=returned_user_id)
+        if not user:
+            raise SelectDidNotReturnAfterUpdateError()
+
+    return user
 
 
-def _build_update_users_query(
-    *,
-    set_username: str | None = None,
-    set_password_hash: str | None = None,
-    where_user_id_equals: UUID,
-) -> tuple[str, list[Any]]:
-    params: list[Any] = []
-    param_number = 0
-
-    def param() -> str:
-        nonlocal param_number
-        param_number += 1
-        return "$" + str(param_number)
-
-    # Build the SET clause
-
-    set_clause_assignments = []
-
-    if set_username is not None:
-        set_clause_assignments.append(f"username = {param()}")
-        params.append(set_username)
-
-    if set_password_hash is not None:
-        set_clause_assignments.append(f"password_hash = {param()}")
-        params.append(set_password_hash)
-
-    if not set_clause_assignments:
-        raise ValueError("Must specify at least one field to update")
-
-    set_clause = "SET " + ", ".join(set_clause_assignments)
-
-    # Build the WHERE clause
-
-    where_clause = f"WHERE id = {param()}"
-    params.append(where_user_id_equals)
-
-    # Build the query
-
-    query = f"""
+async def update_user_password_hash(
+    db: Connection, *, user_id: UUID, password_hash: str
+) -> None:
+    query, *params = (
+        """
         UPDATE users
-        {set_clause}
-        {where_clause}
-        RETURNING id, username, password_hash, employee_id
-    """
+        SET password_hash = $1
+        WHERE id = $2
+        """,
+        password_hash,
+        user_id,
+    )
 
-    return query, params
-
-
-def _build_select_users_query(
-    *,
-    where_user_id_equals: UUID | None = None,
-    where_username_equals: str | None = None,
-    limit: int | None = None,
-) -> tuple[str, list[Any]]:
-    params: list[Any] = []
-    param_number = 0
-
-    def param() -> str:
-        nonlocal param_number
-        param_number += 1
-        return "$" + str(param_number)
-
-    # Build the WHERE clause
-
-    where_clause_conditions = []
-
-    if where_user_id_equals is not None:
-        where_clause_conditions.append(f"id = {param()}")
-        params.append(where_user_id_equals)
-
-    if where_username_equals is not None:
-        where_clause_conditions.append(f"lower(username) = lower({param()})")
-        params.append(where_username_equals)
-
-    if where_clause_conditions:
-        where_clause = "WHERE " + " AND ".join(where_clause_conditions)
-    else:
-        where_clause = ""
-
-    # Build the LIMIT clause
-
-    if limit is not None:
-        limit_clause = f"LIMIT {param()}"
-        params.append(limit)
-    else:
-        limit_clause = ""
-
-    # Build the query
-
-    query = f"""
-        SELECT id, username, password_hash, employee_id
-        FROM users
-        {where_clause}
-        {limit_clause}
-    """
-
-    return query, params
-
-
-def _user_from_row(row: Record) -> User:
-    return User(**row)
+    await db.execute(query, *params)
