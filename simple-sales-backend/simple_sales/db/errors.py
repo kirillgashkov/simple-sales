@@ -25,3 +25,7 @@ class UpdateError(DatabaseError):
 
 class UpdateDidNotReturnError(UpdateError):
     pass
+
+
+class SelectDidNotReturnAfterUpdateError(UpdateError):
+    pass
