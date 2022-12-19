@@ -5,7 +5,7 @@ from uuid import UUID
 from asyncpg import Connection, Record
 
 from simple_sales.db.errors import InsertDidNotReturnError
-from simple_sales.db.models import Session
+from simple_sales.db.models import User, Session
 
 
 async def select_session(
@@ -111,15 +111,15 @@ def _build_select_sessions_query(
     where_clause_conditions = []
 
     if where_id_equals is not None:
-        where_clause_conditions.append(f"id = {param()}")
+        where_clause_conditions.append(f"sessions.id = {param()}")
         params.append(where_id_equals)
 
     if where_user_id_equals is not None:
-        where_clause_conditions.append(f"user_id = {param()}")
+        where_clause_conditions.append(f"sessions.user_id = {param()}")
         params.append(where_user_id_equals)
 
     if where_expires_at_greater_than is not None:
-        where_clause_conditions.append(f"expires_at > {param()}")
+        where_clause_conditions.append(f"sessions.expires_at > {param()}")
         params.append(where_expires_at_greater_than)
 
     if where_clause_conditions:
@@ -138,8 +138,15 @@ def _build_select_sessions_query(
     # Build the query
 
     query = f"""
-        SELECT id, user_id, expires_at
+        SELECT
+            sessions.id,
+            sessions.user_id,
+            users.username AS user_username,
+            users.password_hash AS user_password_hash,
+            users.employee_id AS user_employee_id,
+            sessions.expires_at
         FROM sessions
+        JOIN users ON users.id = sessions.user_id
         {where_clause}
         {limit_clause}
     """
@@ -150,6 +157,11 @@ def _build_select_sessions_query(
 def _session_from_row(row: Record) -> Session:
     return Session(
         id=row["id"],
-        user_id=row["user_id"],
+        user=User(
+            id=row["user_id"],
+            username=row["user_username"],
+            password_hash=row["user_password_hash"],
+            employee_id=row["user_employee_id"],
+        ),
         expires_at=row["expires_at"],
     )
