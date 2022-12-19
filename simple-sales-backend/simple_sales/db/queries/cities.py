@@ -1,4 +1,4 @@
-from asyncpg import Connection
+from asyncpg import Connection, Record
 
 from simple_sales.db.errors import SelectDidNotReturnAfterInsertError
 from simple_sales.db.models import City
@@ -12,7 +12,7 @@ async def select_cities(db: Connection) -> list[City]:
         """
     )
 
-    def row_to_city(row):
+    def row_to_city(row: Record) -> City:
         return City(
             id=row["id"],
             name=row["name"],
