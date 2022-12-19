@@ -5,7 +5,7 @@ from uuid import UUID
 from asyncpg import Connection, Record
 
 from simple_sales.db.errors import InsertDidNotReturnError
-from simple_sales.db.models import User, Session
+from simple_sales.db.models import Session, User
 
 
 async def select_session(
