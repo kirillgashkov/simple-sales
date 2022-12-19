@@ -44,7 +44,6 @@ async def _select_city(db: Connection, *, name: str, region: str) -> City | None
         SELECT id, name, region
         FROM cities
         WHERE name = $1 AND region = $2
-        LIMIT 1
         """,
         name,
         region,
