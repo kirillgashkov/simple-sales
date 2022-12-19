@@ -14,7 +14,7 @@ from simple_sales.api.models import (
     CityOut,
     EmployeeOut,
     EmployeeTypeOut,
-    UserIn,
+    UserInCreate,
     UserPasswordIn,
     UserOut,
 )
@@ -47,37 +47,37 @@ async def get_current_user(
 
 @router.post("/users", response_model=UserOut)
 async def create_user(
-    user_in: UserIn,
+    user_in_create: UserInCreate,
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
 ) -> UserOut:
     async with db.transaction():
-        if isinstance(user_in.employee.city, CityIn):
+        if isinstance(user_in_create.employee.city, CityIn):
             city = await select_or_insert_city(
                 db,
-                name=user_in.employee.city.name,
-                region=user_in.employee.city.region,
+                name=user_in_create.employee.city.name,
+                region=user_in_create.employee.city.region,
             )
             city_id = city.id
-        elif isinstance(user_in.employee.city, CityInReference):
-            city_id = user_in.employee.city.id
+        elif isinstance(user_in_create.employee.city, CityInReference):
+            city_id = user_in_create.employee.city.id
         else:
             assert False
 
         employee = await insert_employee(
             db,
-            employee_type_id=user_in.employee.employee_type.id,
-            first_name=user_in.employee.first_name,
-            middle_name=user_in.employee.middle_name,
-            last_name=user_in.employee.last_name,
+            employee_type_id=user_in_create.employee.employee_type.id,
+            first_name=user_in_create.employee.first_name,
+            middle_name=user_in_create.employee.middle_name,
+            last_name=user_in_create.employee.last_name,
             city_id=city_id,
         )
 
         try:
             user = await insert_user(
                 db,
-                username=user_in.username,
-                password_hash=ph.hash(user_in.password),
+                username=user_in_create.username,
+                password_hash=ph.hash(user_in_create.password),
                 employee_id=employee.id,
             )
         except UsernameAlreadyExistsError:

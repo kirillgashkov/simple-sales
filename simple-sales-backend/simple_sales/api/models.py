@@ -278,19 +278,19 @@ class TaskOutReference(BaseModel):
     id: UUID
 
 
-class UserIn(BaseModel):
+class UserInCreate(BaseModel):
     username: str
     password: str
     employee: EmployeeIn
 
 
-class UserInReference(BaseModel):
-    username: str
-
-
 class UserInUpdate(BaseModel):
     username: str
     employee: EmployeeIn
+
+
+class UserInReference(BaseModel):
+    username: str
 
 
 class UserPasswordIn(BaseModel):
