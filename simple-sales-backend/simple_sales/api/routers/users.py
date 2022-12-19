@@ -1,10 +1,11 @@
 import argon2
 from asyncpg import Connection
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 
 from simple_sales.api.dependencies.argon2 import get_password_hasher
 from simple_sales.api.dependencies.auth import (
     get_current_user as get_current_user_dependency,
+    verify_password_authorization_for_current_user,
 )
 from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.models import (
@@ -14,13 +15,14 @@ from simple_sales.api.models import (
     EmployeeOut,
     EmployeeTypeOut,
     UserIn,
+    UserInPassword,
     UserOut,
 )
 from simple_sales.db.errors import UsernameAlreadyExistsError
 from simple_sales.db.models import Employee, User
 from simple_sales.db.queries.cities import select_or_insert_city
 from simple_sales.db.queries.employees import insert_employee, select_employee
-from simple_sales.db.queries.users import insert_user
+from simple_sales.db.queries.users import insert_user, update_user
 
 router = APIRouter()
 
@@ -82,6 +84,27 @@ async def create_user(
             raise _HTTP_409_USERNAME_ALREADY_EXISTS
 
     return _user_out_from_user_and_employee(user, employee)
+
+
+@router.put(
+    "/users/current/password",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+    dependencies=[Depends(verify_password_authorization_for_current_user)],
+)
+async def update_current_user_password(
+    user_in_password: UserInPassword,
+    current_user: User = Depends(get_current_user_dependency),
+    db: Connection = Depends(get_db),
+    ph: argon2.PasswordHasher = Depends(get_password_hasher),
+) -> Response:
+    await update_user(
+        db,
+        user_id=current_user.id,
+        new_password_hash=ph.hash(user_in_password.password),
+    )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 def _user_out_from_user_and_employee(user: User, employee: Employee) -> UserOut:
