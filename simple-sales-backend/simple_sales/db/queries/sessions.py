@@ -77,6 +77,20 @@ async def delete_session(
     )
 
 
+async def delete_sessions(
+    db: Connection,
+    *,
+    user_id: UUID,
+) -> None:
+    await db.execute(
+        """
+        DELETE FROM sessions
+        WHERE user_id = $1
+        """,
+        user_id,
+    )
+
+
 def _build_select_sessions_query(
     *,
     where_id_equals: UUID | None = None,
