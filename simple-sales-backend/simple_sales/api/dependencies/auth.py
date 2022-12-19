@@ -32,23 +32,17 @@ _CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_EXCEPTION = HTTPException(
     headers=_AUTHENTICATE_HEADERS,
 )
 
+_CREDENTIALS_WERE_PROVIDED_FOR_ANOTHER_USER_EXCEPTION = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Credentials were provided for another user",
+    headers=_AUTHENTICATE_HEADERS,
+)
+
 _NOT_AUTHENTICATED_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Not authenticated",
     headers=_AUTHENTICATE_HEADERS,
 )
-
-
-async def get_current_password_authorized_user(
-    credentials: HTTPBasicCredentials = Depends(HTTPBasic(auto_error=True)),
-    db: Connection = Depends(get_db),
-    ph: argon2.PasswordHasher = Depends(get_password_hasher),
-) -> User:
-    return await _get_password_authorized_user(
-        credentials=credentials,
-        db=db,
-        ph=ph,
-    )
 
 
 async def get_current_session(
@@ -90,6 +84,22 @@ async def get_current_user(
         return session.user
 
     raise _NOT_AUTHENTICATED_EXCEPTION
+
+
+async def verify_password_authorization_for_current_user(
+    current_user: User = Depends(get_current_user),
+    credentials: HTTPBasicCredentials = Depends(HTTPBasic(auto_error=True)),
+    db: Connection = Depends(get_db),
+    ph: argon2.PasswordHasher = Depends(get_password_hasher),
+) -> None:
+    current_password_authorized_user = await _get_password_authorized_user(
+        credentials=credentials,
+        db=db,
+        ph=ph,
+    )
+
+    if current_password_authorized_user.id != current_user.id:
+        raise _CREDENTIALS_WERE_PROVIDED_FOR_ANOTHER_USER_EXCEPTION
 
 
 async def _get_password_authorized_user(
