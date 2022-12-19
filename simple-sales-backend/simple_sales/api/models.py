@@ -280,7 +280,7 @@ class TaskOutReference(BaseModel):
 
 class UserIn(BaseModel):
     username: str
-    password_hash: str
+    password: str
     employee: EmployeeIn
 
 
