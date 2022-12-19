@@ -45,7 +45,7 @@ async def get_current_user(
     return _user_out_from_user_and_employee(current_user, employee)
 
 
-@router.post("/users", response_model=UserOut)
+@router.post("/users", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 async def create_user(
     user_in_create: UserInCreate,
     db: Connection = Depends(get_db),
@@ -88,8 +88,8 @@ async def create_user(
 
 @router.put(
     "/users/current/password",
-    status_code=status.HTTP_204_NO_CONTENT,
     response_class=Response,
+    status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(verify_password_authorization_for_current_user)],
 )
 async def update_current_user_password(
