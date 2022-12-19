@@ -1,10 +1,12 @@
 import argon2
 from asyncpg import Connection
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from simple_sales.api.dependencies.argon2 import get_password_hasher
 from simple_sales.api.dependencies.auth import (
     get_current_user as get_current_user_dependency,
+)
+from simple_sales.api.dependencies.auth import (
     verify_password_authorization_for_current_user,
 )
 from simple_sales.api.dependencies.db import get_db
@@ -15,8 +17,8 @@ from simple_sales.api.models import (
     EmployeeOut,
     EmployeeTypeOut,
     UserInCreate,
-    UserPasswordIn,
     UserOut,
+    UserPasswordIn,
 )
 from simple_sales.db.errors import UsernameAlreadyExistsError
 from simple_sales.db.models import Employee, User
