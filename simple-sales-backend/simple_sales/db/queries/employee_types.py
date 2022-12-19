@@ -10,4 +10,11 @@ async def select_employee_types(db: Connection) -> list[EmployeeType]:
         FROM employee_types
         """
     )
-    return [EmployeeType(**row) for row in rows]
+
+    def row_to_employee_type(row):
+        return EmployeeType(
+            id=row["id"],
+            name=row["name"],
+        )
+
+    return [row_to_employee_type(row) for row in rows]
