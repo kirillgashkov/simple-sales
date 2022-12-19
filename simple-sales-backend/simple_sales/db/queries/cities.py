@@ -12,7 +12,14 @@ async def select_cities(db: Connection) -> list[City]:
         """
     )
 
-    return [City(**row) for row in rows]
+    def row_to_city(row):
+        return City(
+            id=row["id"],
+            name=row["name"],
+            region=row["region"],
+        )
+
+    return [row_to_city(row) for row in rows]
 
 
 async def select_or_insert_city(db: Connection, *, name: str, region: str) -> City:
@@ -45,7 +52,11 @@ async def _select_city(db: Connection, *, name: str, region: str) -> City | None
     if not row:
         return None
 
-    return City(**row)
+    return City(
+        id=row["id"],
+        name=row["name"],
+        region=row["region"],
+    )
 
 
 async def _insert_city_on_conflict_do_nothing(
@@ -64,4 +75,8 @@ async def _insert_city_on_conflict_do_nothing(
     if not row:
         return None
 
-    return City(**row)
+    return City(
+        id=row["id"],
+        name=row["name"],
+        region=row["region"],
+    )
