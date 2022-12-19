@@ -17,3 +17,11 @@ class SelectDidNotReturnAfterInsertError(InsertError):
 class UsernameAlreadyExistsError(InsertError):
     def __init__(self, username: str) -> None:
         self.username = username
+
+
+class UpdateError(DatabaseError):
+    pass
+
+
+class UpdateDidNotReturnError(UpdateError):
+    pass
