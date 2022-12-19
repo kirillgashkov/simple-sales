@@ -109,5 +109,5 @@ class User(BaseModel):
 
 class Session(BaseModel):
     id: UUID
-    user: User
+    user_id: UUID
     expires_at: datetime
