@@ -37,6 +37,9 @@ async def get_current_user(
     db: Connection = Depends(get_db),
 ) -> UserOut:
     employee = await select_employee(db, employee_id=current_user.employee_id)
+
+    assert employee is not None
+
     return _user_out_from_user_and_employee(current_user, employee)
 
 
@@ -57,7 +60,7 @@ async def create_user(
         elif isinstance(user_in.employee.city, CityInReference):
             city_id = user_in.employee.city.id
         else:
-            raise RuntimeError("Unexpected city type")
+            assert False
 
         employee = await insert_employee(
             db,
