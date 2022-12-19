@@ -1,11 +1,10 @@
 from datetime import datetime
-from typing import Any
 from uuid import UUID
 
-from asyncpg import Connection, Record
+from asyncpg import Connection
 
 from simple_sales.db.errors import InsertDidNotReturnError
-from simple_sales.db.models import Session, User
+from simple_sales.db.models import Session
 
 
 async def select_session(
@@ -14,32 +13,23 @@ async def select_session(
     id: UUID,
     expires_after: datetime,
 ) -> Session | None:
-    query, params = _build_select_sessions_query(
-        where_id_equals=id,
-        where_expires_at_greater_than=expires_after,
-        limit=1,
+    row = await db.fetchrow(
+        """
+        SELECT id, user_id, expires_at
+        FROM sessions
+        WHERE id = $1 AND expires_at > $2
+        """,
+        id,
+        expires_after,
     )
-    row = await db.fetchrow(query, *params)
-
     if not row:
         return None
 
-    return _session_from_row(row)
-
-
-async def select_sessions(
-    db: Connection,
-    *,
-    user_id: UUID | None = None,
-    expires_after: datetime | None = None,
-) -> list[Session]:
-    query, params = _build_select_sessions_query(
-        where_user_id_equals=user_id,
-        where_expires_at_greater_than=expires_after,
+    return Session(
+        id=row["id"],
+        user_id=row["user_id"],
+        expires_at=row["expires_at"],
     )
-    rows = await db.fetch(query, *params)
-
-    return [_session_from_row(row) for row in rows]
 
 
 async def insert_session(
@@ -60,108 +50,22 @@ async def insert_session(
     if not row:
         raise InsertDidNotReturnError()
 
-    return _session_from_row(row)
+    return Session(
+        id=row["id"],
+        user_id=row["user_id"],
+        expires_at=row["expires_at"],
+    )
 
 
 async def delete_session(
     db: Connection,
     *,
-    id: UUID,
+    session_id: UUID,
 ) -> None:
     await db.execute(
         """
         DELETE FROM sessions
         WHERE id = $1
         """,
-        id,
-    )
-
-
-async def delete_sessions(
-    db: Connection,
-    *,
-    user_id: UUID,
-) -> None:
-    await db.execute(
-        """
-        DELETE FROM sessions
-        WHERE user_id = $1
-        """,
-        user_id,
-    )
-
-
-def _build_select_sessions_query(
-    *,
-    where_id_equals: UUID | None = None,
-    where_user_id_equals: UUID | None = None,
-    where_expires_at_greater_than: datetime | None = None,
-    limit: int | None = None,
-) -> tuple[str, list[Any]]:
-    params: list[Any] = []
-    param_number = 0
-
-    def param() -> str:
-        nonlocal param_number
-        param_number += 1
-        return "$" + str(param_number)
-
-    # Build the WHERE clause
-
-    where_clause_conditions = []
-
-    if where_id_equals is not None:
-        where_clause_conditions.append(f"sessions.id = {param()}")
-        params.append(where_id_equals)
-
-    if where_user_id_equals is not None:
-        where_clause_conditions.append(f"sessions.user_id = {param()}")
-        params.append(where_user_id_equals)
-
-    if where_expires_at_greater_than is not None:
-        where_clause_conditions.append(f"sessions.expires_at > {param()}")
-        params.append(where_expires_at_greater_than)
-
-    if where_clause_conditions:
-        where_clause = "WHERE " + " AND ".join(where_clause_conditions)
-    else:
-        where_clause = ""
-
-    # Build the LIMIT clause
-
-    if limit is not None:
-        limit_clause = f"LIMIT {param()}"
-        params.append(limit)
-    else:
-        limit_clause = ""
-
-    # Build the query
-
-    query = f"""
-        SELECT
-            sessions.id,
-            sessions.user_id,
-            users.username AS user_username,
-            users.password_hash AS user_password_hash,
-            users.employee_id AS user_employee_id,
-            sessions.expires_at
-        FROM sessions
-        JOIN users ON users.id = sessions.user_id
-        {where_clause}
-        {limit_clause}
-    """
-
-    return query, params
-
-
-def _session_from_row(row: Record) -> Session:
-    return Session(
-        id=row["id"],
-        user=User(
-            id=row["user_id"],
-            username=row["user_username"],
-            password_hash=row["user_password_hash"],
-            employee_id=row["user_employee_id"],
-        ),
-        expires_at=row["expires_at"],
+        session_id,
     )
