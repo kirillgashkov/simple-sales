@@ -64,7 +64,7 @@ async def get_current_session(
 
 
 async def get_current_user(
-    credentials: HTTPBasicCredentials | None = Depends(HTTPBasic()),
+    credentials: HTTPBasicCredentials | None = Depends(HTTPBasic(auto_error=True)),
     session_id: UUID | None = Cookie(None, alias=API_SESSION_ID_COOKIE_NAME),
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
