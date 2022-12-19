@@ -3,7 +3,11 @@ from uuid import UUID
 
 from asyncpg import Connection, Record, exceptions
 
-from simple_sales.db.errors import InsertDidNotReturnError, UsernameAlreadyExistsError
+from simple_sales.db.errors import (
+    InsertDidNotReturnError,
+    UpdateDidNotReturnError,
+    UsernameAlreadyExistsError,
+)
 from simple_sales.db.models import User
 
 
@@ -59,6 +63,77 @@ async def insert_user(
         raise InsertDidNotReturnError()
 
     return _user_from_row(row)
+
+
+async def update_user(
+    db: Connection,
+    *,
+    user_id: UUID,
+    new_username: str | None = None,
+    new_password_hash: str | None = None,
+) -> User:
+    if not new_username and not new_password_hash:
+        raise ValueError("Must specify at least one field to update")
+
+    query, params = _build_update_users_query(
+        set_username=new_username,
+        set_password_hash=new_password_hash,
+        where_user_id_equals=user_id,
+    )
+    row = await db.fetchrow(query, *params)
+
+    if not row:
+        raise UpdateDidNotReturnError()
+
+    return _user_from_row(row)
+
+
+def _build_update_users_query(
+    *,
+    set_username: str | None = None,
+    set_password_hash: str | None = None,
+    where_user_id_equals: UUID,
+) -> tuple[str, list[Any]]:
+    params: list[Any] = []
+    param_number = 0
+
+    def param() -> str:
+        nonlocal param_number
+        param_number += 1
+        return "$" + str(param_number)
+
+    # Build the SET clause
+
+    set_clause_assignments = []
+
+    if set_username is not None:
+        set_clause_assignments.append(f"username = {param()}")
+        params.append(set_username)
+
+    if set_password_hash is not None:
+        set_clause_assignments.append(f"password_hash = {param()}")
+        params.append(set_password_hash)
+
+    if not set_clause_assignments:
+        raise ValueError("Must specify at least one field to update")
+
+    set_clause = "SET " + ", ".join(set_clause_assignments)
+
+    # Build the WHERE clause
+
+    where_clause = f"WHERE id = {param()}"
+    params.append(where_user_id_equals)
+
+    # Build the query
+
+    query = f"""
+        UPDATE users
+        {set_clause}
+        {where_clause}
+        RETURNING id, username, password_hash, employee_id
+    """
+
+    return query, params
 
 
 def _build_select_users_query(
