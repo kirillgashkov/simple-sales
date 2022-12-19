@@ -288,7 +288,12 @@ class UserInReference(BaseModel):
     username: str
 
 
-class UserInPassword(BaseModel):
+class UserInUpdate(BaseModel):
+    username: str
+    employee: EmployeeIn
+
+
+class UserPasswordIn(BaseModel):
     password: str
 
 

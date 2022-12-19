@@ -15,7 +15,7 @@ from simple_sales.api.models import (
     EmployeeOut,
     EmployeeTypeOut,
     UserIn,
-    UserInPassword,
+    UserPasswordIn,
     UserOut,
 )
 from simple_sales.db.errors import UsernameAlreadyExistsError
@@ -93,7 +93,7 @@ async def create_user(
     dependencies=[Depends(verify_password_authorization_for_current_user)],
 )
 async def update_current_user_password(
-    user_in_password: UserInPassword,
+    user_password_in: UserPasswordIn,
     current_user: User = Depends(get_current_user_dependency),
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
@@ -101,7 +101,7 @@ async def update_current_user_password(
     await update_user(
         db,
         user_id=current_user.id,
-        new_password_hash=ph.hash(user_in_password.password),
+        new_password_hash=ph.hash(user_password_in.password),
     )
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
