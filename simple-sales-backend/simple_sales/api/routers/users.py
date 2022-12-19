@@ -1,28 +1,26 @@
 import argon2
-from asyncpg import Connection, exceptions
+from asyncpg import Connection
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from simple_sales.api.dependencies.db import get_db
+from simple_sales.api.dependencies.argon2 import get_password_hasher
 from simple_sales.api.dependencies.auth import (
     get_current_user as get_current_user_dependency,
 )
-from simple_sales.api.dependencies.argon2 import get_password_hasher
+from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.models import (
+    CityIn,
+    CityInReference,
     CityOut,
     EmployeeOut,
     EmployeeTypeOut,
-    UserOut,
     UserIn,
-    EmployeeIn,
-    CityIn,
-    CityInReference,
-    EmployeeTypeInReference,
+    UserOut,
 )
-from simple_sales.db.models import User, Employee
-from simple_sales.db.queries.employees import select_employee, insert_employee
-from simple_sales.db.queries.users import insert_user
-from simple_sales.db.queries.cities import select_or_insert_city
 from simple_sales.db.errors import UsernameAlreadyExistsError
+from simple_sales.db.models import Employee, User
+from simple_sales.db.queries.cities import select_or_insert_city
+from simple_sales.db.queries.employees import insert_employee, select_employee
+from simple_sales.db.queries.users import insert_user
 
 router = APIRouter()
 
