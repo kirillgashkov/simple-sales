@@ -14,8 +14,8 @@ from simple_sales.db.models import User
 async def select_user(
     db: Connection,
     *,
-    user_id: UUID | None,
-    username: str | None,
+    user_id: UUID | None = None,
+    username: str | None = None,
 ) -> User | None:
     if not user_id and not username:
         raise ValueError("Must specify user_id or username")
