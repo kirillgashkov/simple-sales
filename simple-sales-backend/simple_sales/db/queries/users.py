@@ -21,7 +21,6 @@ async def select_user(
         where_username_equals=username,
         limit=1,
     )
-
     row = await db.fetchrow(query, *params)
 
     if not row:

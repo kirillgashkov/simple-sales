@@ -18,7 +18,6 @@ async def select_employees(
     query, params = _build_select_employees_query(
         where_employee_type_id_equals=employee_type_id,
     )
-
     rows = await db.fetch(query, *params)
 
     return [_employee_from_row(row) for row in rows]
@@ -33,7 +32,6 @@ async def select_employee(
         where_employee_id_equals=employee_id,
         limit=1,
     )
-
     row = await db.fetchrow(query, *params)
 
     if not row:
