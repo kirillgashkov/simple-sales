@@ -159,7 +159,7 @@ def _build_select_users_query(
         params.append(where_user_id_equals)
 
     if where_username_equals is not None:
-        where_clause_conditions.append(f"username = {param()}")
+        where_clause_conditions.append(f"lower(username) = lower({param()})")
         params.append(where_username_equals)
 
     if where_clause_conditions:
