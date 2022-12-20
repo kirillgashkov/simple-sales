@@ -43,6 +43,12 @@ _HTTP_401_NOT_AUTHENTICATED_EXCEPTION = HTTPException(
     headers=_AUTHENTICATE_HEADERS,
 )
 
+_HTTP_401_PASSWORD_AUTHORIZATION_REQUIRED_EXCEPTION = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Password authorization required",
+    headers=_AUTHENTICATE_HEADERS,
+)
+
 
 async def get_current_session_if_valid(
     credentials: HTTPBasicCredentials | None = Depends(HTTPBasic(auto_error=False)),
@@ -101,9 +107,19 @@ async def get_current_user(
     return user
 
 
+# This ia a wrapper around 'HTTPBasic' to raise an error with a more specific message.
+async def _get_current_http_basic_credentials(
+    credentials: HTTPBasicCredentials | None = Depends(HTTPBasic(auto_error=False)),
+) -> HTTPBasicCredentials:
+    if not credentials:
+        raise _HTTP_401_PASSWORD_AUTHORIZATION_REQUIRED_EXCEPTION
+
+    return credentials
+
+
 async def verify_password_authorization_for_current_user(
     current_user: User = Depends(get_current_user),
-    credentials: HTTPBasicCredentials = Depends(HTTPBasic(auto_error=True)),
+    credentials: HTTPBasicCredentials = Depends(_get_current_http_basic_credentials),
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
 ) -> None:
