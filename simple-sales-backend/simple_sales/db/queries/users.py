@@ -248,6 +248,6 @@ async def update_user_password_hash(
         raise UpdateDidNotReturnError()
 
     return UserPasswordHash(
-        id=row["id"],
+        user_id=row["id"],
         password_hash=row["password_hash"],
     )
