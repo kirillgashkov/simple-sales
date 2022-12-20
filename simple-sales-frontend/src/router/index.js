@@ -46,13 +46,13 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/clients/:clientID/contacts/:contactID",
+      path: "/clients/:clientId/contacts/:contactId",
       name: "contact",
       component: () => import("../views/ContactView.vue"),
       props: true,
     },
     {
-      path: "/clients/:clientID/contracts/:contractID",
+      path: "/clients/:clientId/contracts/:contractId",
       name: "contract",
       component: () => import("../views/ContractView.vue"),
       props: true,
