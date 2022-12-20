@@ -72,6 +72,7 @@ async def get_current_user(
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
 ) -> User:
+    password_authorized_user_id = None
     if credentials:
         password_authorized_user_id = await _get_password_authorized_user_id(
             credentials=credentials,
@@ -79,6 +80,7 @@ async def get_current_user(
             ph=ph,
         )
 
+    session = None
     if session_id:
         session = await _get_session_if_valid(session_id=session_id, db=db)
 

@@ -103,7 +103,6 @@ class Task(BaseModel):
 class User(BaseModel):
     id: UUID
     username: str
-    password_hash: str
     employee: Employee
 
 
