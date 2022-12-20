@@ -131,7 +131,7 @@ async def insert_user(
     if not user_id:
         raise InsertDidNotReturnError()
 
-    user = select_user(db, user_id=user_id)
+    user = await select_user(db, user_id=user_id)
     if not user:
         raise SelectDidNotReturnAfterInsertError()
 
@@ -191,7 +191,7 @@ async def update_user(
         if not row:
             raise UpdateDidNotReturnError()
 
-        user = select_user(db, user_id=returned_user_id)
+        user = await select_user(db, user_id=returned_user_id)
         if not user:
             raise SelectDidNotReturnAfterUpdateError()
 

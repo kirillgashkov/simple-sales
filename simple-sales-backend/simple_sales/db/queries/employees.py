@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from asyncpg import Connection
+from asyncpg import Connection, Record
 
 from simple_sales.db.models import City, Employee, EmployeeType
 
@@ -24,7 +24,7 @@ async def select_employees(db: Connection) -> list[Employee]:
         """
     )
 
-    def row_to_employee(row):
+    def row_to_employee(row: Record) -> Employee:
         return Employee(
             id=row["id"],
             employee_type=EmployeeType(
@@ -66,7 +66,7 @@ async def select_employees_by_employee_type_id(
         employee_type_id,
     )
 
-    def row_to_employee(row):
+    def row_to_employee(row: Record) -> Employee:
         return Employee(
             id=row["id"],
             employee_type=EmployeeType(
