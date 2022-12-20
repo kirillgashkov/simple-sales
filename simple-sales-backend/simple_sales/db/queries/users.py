@@ -3,9 +3,13 @@ from uuid import UUID
 from asyncpg import Connection, exceptions
 
 from simple_sales.db.errors import (
+    ForeignKeyViolationError,
     InsertDidNotReturnError,
+    ReferencedCityNotFoundError,
+    ReferencedEmployeeTypeNotFoundError,
     SelectDidNotReturnAfterInsertError,
     SelectDidNotReturnAfterUpdateError,
+    UniqueViolationError,
     UpdateDidNotReturnError,
     UsernameAlreadyExistsError,
 )
@@ -124,7 +128,13 @@ async def insert_user(
     except exceptions.UniqueViolationError as e:
         if e.constraint_name == "users_username_lower_idx":
             raise UsernameAlreadyExistsError(username)
-        raise
+        raise UniqueViolationError()
+    except exceptions.ForeignKeyViolationError as e:
+        if e.constraint_name == "employees_city_id_fkey":
+            raise ReferencedCityNotFoundError(employee_city_id)
+        elif e.constraint_name == "employees_employee_type_id_fkey":
+            raise ReferencedEmployeeTypeNotFoundError(employee_type_id)
+        raise ForeignKeyViolationError()
 
     if not user_id:
         raise InsertDidNotReturnError()
@@ -148,7 +158,7 @@ async def update_user(
     employee_city_id: UUID,
 ) -> User:
     async with db.transaction():
-        query, *params = (
+        update_users_query, *update_users_params = (
             """
             UPDATE users
             SET username = $1
@@ -160,19 +170,21 @@ async def update_user(
         )
 
         try:
-            row = await db.fetchrow(query, *params)
+            update_users_row = await db.fetchrow(
+                update_users_query, *update_users_params
+            )
         except exceptions.UniqueViolationError as e:
             if e.constraint_name == "users_username_lower_idx":
                 raise UsernameAlreadyExistsError(username)
-            raise
+            raise UniqueViolationError()
 
-        if not row:
+        if not update_users_row:
             raise UpdateDidNotReturnError()
 
-        returned_user_id = row["id"]
-        returned_employee_id = row["employee_id"]
+        returned_user_id = update_users_row["id"]
+        returned_employee_id = update_users_row["employee_id"]
 
-        row = await db.fetchrow(
+        update_employees_query, *update_employees_params = (
             """
             UPDATE employees
             SET employee_type_id = $1, first_name = $2, middle_name = $3, last_name = $4, city_id = $5
@@ -186,7 +198,19 @@ async def update_user(
             employee_city_id,
             returned_employee_id,
         )
-        if not row:
+
+        try:
+            update_employees_row = await db.fetchrow(
+                update_employees_query, *update_employees_params
+            )
+        except exceptions.ForeignKeyViolationError as e:
+            if e.constraint_name == "employees_city_id_fkey":
+                raise ReferencedCityNotFoundError(employee_city_id)
+            elif e.constraint_name == "employees_employee_type_id_fkey":
+                raise ReferencedEmployeeTypeNotFoundError(employee_type_id)
+            raise ForeignKeyViolationError()
+
+        if not update_employees_row:
             raise UpdateDidNotReturnError()
 
         user = await select_user(db, user_id=returned_user_id)

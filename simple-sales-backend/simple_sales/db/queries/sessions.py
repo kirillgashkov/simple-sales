@@ -1,9 +1,13 @@
 from datetime import datetime
 from uuid import UUID
 
-from asyncpg import Connection
+from asyncpg import Connection, exceptions
 
-from simple_sales.db.errors import InsertDidNotReturnError
+from simple_sales.db.errors import (
+    ForeignKeyViolationError,
+    InsertDidNotReturnError,
+    ReferencedUserNotFoundError,
+)
 from simple_sales.db.models import Session
 
 
@@ -38,7 +42,7 @@ async def insert_session(
     user_id: UUID,
     expires_at: datetime,
 ) -> Session:
-    row = await db.fetchrow(
+    query, *params = (
         """
         INSERT INTO sessions (user_id, expires_at)
         VALUES ($1, $2)
@@ -47,6 +51,14 @@ async def insert_session(
         user_id,
         expires_at,
     )
+
+    try:
+        row = await db.fetchrow(query, *params)
+    except exceptions.ForeignKeyViolationError as e:
+        if e.constraint_name == "sessions_user_id_fkey":
+            raise ReferencedUserNotFoundError(user_id) from e
+        raise ForeignKeyViolationError
+
     if not row:
         raise InsertDidNotReturnError()
 
