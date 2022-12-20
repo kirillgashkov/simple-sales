@@ -88,9 +88,9 @@ async def insert_user(
     password_hash: str,
     employee_type_id: UUID,
     employee_first_name: str,
-    employee_middle_name: str,
+    employee_middle_name: str | None,
     employee_last_name: str,
-    city_id: UUID,
+    employee_city_id: UUID,
 ) -> User:
     query, *params = (
         """
@@ -118,7 +118,7 @@ async def insert_user(
         employee_first_name,
         employee_middle_name,
         employee_last_name,
-        city_id,
+        employee_city_id,
     )
 
     try:
@@ -145,9 +145,9 @@ async def update_user(
     username: str,
     employee_type_id: UUID,
     employee_first_name: str,
-    employee_middle_name: str,
+    employee_middle_name: str | None,
     employee_last_name: str,
-    city_id: UUID,
+    employee_city_id: UUID,
 ) -> User:
     async with db.transaction():
         query, *params = (
@@ -185,7 +185,7 @@ async def update_user(
             employee_first_name,
             employee_middle_name,
             employee_last_name,
-            city_id,
+            employee_city_id,
             returned_employee_id,
         )
         if not row:
