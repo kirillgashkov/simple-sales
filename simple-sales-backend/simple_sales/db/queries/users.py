@@ -200,15 +200,21 @@ async def update_user(
 
 async def update_user_password_hash(
     db: Connection, *, user_id: UUID, password_hash: str
-) -> None:
-    query, *params = (
+) -> UserPasswordHash:
+    row = await db.fetchrow(
         """
         UPDATE users
         SET password_hash = $1
         WHERE id = $2
+        RETURNING id, password_hash
         """,
         password_hash,
         user_id,
     )
+    if not row:
+        raise UpdateDidNotReturnError()
 
-    await db.execute(query, *params)
+    return UserPasswordHash(
+        id=row["id"],
+        password_hash=row["password_hash"],
+    )
