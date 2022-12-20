@@ -5,11 +5,11 @@ from asyncpg import Connection, exceptions
 from simple_sales.db.errors import (
     InsertDidNotReturnError,
     SelectDidNotReturnAfterInsertError,
-    UpdateDidNotReturnError,
     SelectDidNotReturnAfterUpdateError,
+    UpdateDidNotReturnError,
     UsernameAlreadyExistsError,
 )
-from simple_sales.db.models import User, UserPasswordHash, Employee, EmployeeType, City
+from simple_sales.db.models import City, Employee, EmployeeType, User, UserPasswordHash
 
 
 async def select_user_password_hash_by_username(
