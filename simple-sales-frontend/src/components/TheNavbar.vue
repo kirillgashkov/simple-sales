@@ -19,32 +19,32 @@ import { RouterLink } from "vue-router";
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
         <div class="navbar-item has-dropdown is-hoverable">
-          <RouterLink class="navbar-link is-arrowless" to="/tasks">
+          <RouterLink class="navbar-link is-arrowless" :to="{ name: 'tasks' }">
             Задания
           </RouterLink>
 
           <div class="navbar-dropdown">
-            <RouterLink class="navbar-item" to="/tasks/assigned">
+            <RouterLink class="navbar-item" :to="{ name: 'tasks', query: { tab: 'assigned' } }">
               Назначенные
             </RouterLink>
-            <RouterLink class="navbar-item" to="/tasks/created">
+            <RouterLink class="navbar-item" :to="{ name: 'tasks', query: { tab: 'created' } }">
               Созданные
             </RouterLink>
-            <RouterLink class="navbar-item" to="/tasks/all">
+            <RouterLink class="navbar-item" :to="{ name: 'tasks', query: { tab: 'all' } }">
               Все
             </RouterLink>
           </div>
         </div>
 
-        <RouterLink class="navbar-item" to="/clients">
+        <RouterLink class="navbar-item" :to="{ name: 'clients' }">
           Клиенты
         </RouterLink>
 
-        <RouterLink class="navbar-item" to="/employees">
+        <RouterLink class="navbar-item" :to="{ name: 'employees' }">
           Сотрудники
         </RouterLink>
 
-        <RouterLink class="navbar-item" to="/reports">
+        <RouterLink class="navbar-item" :to="{ name: 'reports' }">
           Отчеты
         </RouterLink>
       </div>
