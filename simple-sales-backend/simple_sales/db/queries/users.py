@@ -27,7 +27,7 @@ async def select_user_password_hash_by_username(
         return None
 
     return UserPasswordHash(
-        id=row["id"],
+        user_id=row["id"],
         password_hash=row["password_hash"],
     )
 
@@ -38,21 +38,20 @@ async def select_user(db: Connection, *, user_id: UUID) -> User | None:
         SELECT
             users.id,
             users.username,
-            users.password_hash,
-            users.employee_id,
-            employees_types.id AS employee_type_id,
-            employees_types.name AS employee_type_name,
+            employees.id AS employee_id,
+            employee_types.id AS employee_type_id,
+            employee_types.name AS employee_type_name,
             employees.first_name AS employee_first_name,
             employees.middle_name AS employee_middle_name,
             employees.last_name AS employee_last_name,
-            cities.id AS city_id,
-            cities.name AS city_name,
-            cities.region AS city_region
+            cities.id AS employee_city_id,
+            cities.name AS employee_city_name,
+            cities.region AS employee_city_region
         FROM users
         JOIN employees ON employees.id = users.employee_id
         JOIN employee_types ON employee_types.id = employees.employee_type_id
         JOIN cities ON cities.id = employees.city_id
-        WHERE id = $1
+        WHERE users.id = $1
         """,
         user_id,
     )
@@ -62,7 +61,6 @@ async def select_user(db: Connection, *, user_id: UUID) -> User | None:
     return User(
         id=row["id"],
         username=row["username"],
-        password_hash=row["password_hash"],
         employee=Employee(
             id=row["employee_id"],
             employee_type=EmployeeType(
@@ -73,9 +71,9 @@ async def select_user(db: Connection, *, user_id: UUID) -> User | None:
             middle_name=row["employee_middle_name"],
             last_name=row["employee_last_name"],
             city=City(
-                id=row["city_id"],
-                name=row["city_name"],
-                region=row["city_region"],
+                id=row["employee_city_id"],
+                name=row["employee_city_name"],
+                region=row["employee_city_region"],
             ),
         ),
     )
