@@ -96,7 +96,6 @@ async def update_current_user(
             db,
             user_id=current_user.id,
             username=user_in_update.username,
-            employee_type_id=user_in_update.employee.employee_type.id,
             employee_first_name=user_in_update.employee.first_name,
             employee_middle_name=user_in_update.employee.middle_name,
             employee_last_name=user_in_update.employee.last_name,

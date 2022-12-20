@@ -165,7 +165,6 @@ async def update_user(
     *,
     user_id: UUID,
     username: str,
-    employee_type_id: UUID,
     employee_first_name: str,
     employee_middle_name: str | None,
     employee_last_name: str,
@@ -175,11 +174,10 @@ async def update_user(
         update_employees_query, *update_employees_params = (
             """
             UPDATE employees
-            SET employee_type_id = $1, first_name = $2, middle_name = $3, last_name = $4, city_id = $5
-            WHERE id = (SELECT employee_id FROM users WHERE id = $6)
+            SET first_name = $1, middle_name = $2, last_name = $3, city_id = $4
+            WHERE id = (SELECT employee_id FROM users WHERE id = $5)
             RETURNING 1
             """,
-            employee_type_id,
             employee_first_name,
             employee_middle_name,
             employee_last_name,
@@ -194,8 +192,6 @@ async def update_user(
         except exceptions.ForeignKeyViolationError as e:
             if e.constraint_name == "employees_city_id_fkey":
                 raise ReferencedCityNotFoundError(employee_city_id)
-            elif e.constraint_name == "employees_employee_type_id_fkey":
-                raise ReferencedEmployeeTypeNotFoundError(employee_type_id)
             raise ForeignKeyViolationError()
 
         if not update_employees_row:
