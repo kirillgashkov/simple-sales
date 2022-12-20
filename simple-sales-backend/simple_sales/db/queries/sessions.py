@@ -10,7 +10,7 @@ from simple_sales.db.models import Session
 async def select_session(
     db: Connection,
     *,
-    id: UUID,
+    session_id: UUID,
     expires_after: datetime,
 ) -> Session | None:
     row = await db.fetchrow(
@@ -19,7 +19,7 @@ async def select_session(
         FROM sessions
         WHERE id = $1 AND expires_at > $2
         """,
-        id,
+        session_id,
         expires_after,
     )
     if not row:

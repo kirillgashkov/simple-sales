@@ -32,7 +32,7 @@ async def select_user_password_hash_by_username(
     )
 
 
-async def select_user(db: Connection, *, user_id: str) -> User | None:
+async def select_user(db: Connection, *, user_id: UUID) -> User | None:
     row = await db.fetchrow(
         """
         SELECT
