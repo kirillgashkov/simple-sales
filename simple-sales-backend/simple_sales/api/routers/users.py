@@ -11,20 +11,21 @@ from simple_sales.api.dependencies.auth import (
 )
 from simple_sales.api.dependencies.db import get_db
 from simple_sales.api.models import (
-    CityIn,
-    CityInReference,
     CityOut,
     EmployeeOut,
     EmployeeTypeOut,
     UserInCreate,
+    UserInUpdate,
     UserOut,
     UserPasswordIn,
 )
 from simple_sales.db.errors import UsernameAlreadyExistsError
-from simple_sales.db.models import Employee, User
-from simple_sales.db.queries.cities import select_or_insert_city
-from simple_sales.db.queries.employees import insert_employee, select_employee
-from simple_sales.db.queries.users import insert_user, update_user
+from simple_sales.db.models import User
+from simple_sales.db.queries.users import (
+    insert_user,
+    update_user,
+    update_user_password_hash,
+)
 
 router = APIRouter()
 
@@ -40,11 +41,7 @@ async def get_current_user(
     current_user: User = Depends(get_current_user_dependency),
     db: Connection = Depends(get_db),
 ) -> UserOut:
-    employee = await select_employee(db, employee_id=current_user.employee_id)
-
-    assert employee is not None
-
-    return _user_out_from_user_and_employee(current_user, employee)
+    return user_to_user_out(current_user)
 
 
 @router.post("/users", response_model=UserOut, status_code=status.HTTP_201_CREATED)
@@ -53,39 +50,44 @@ async def create_user(
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
 ) -> UserOut:
-    async with db.transaction():
-        if isinstance(user_in_create.employee.city, CityIn):
-            city = await select_or_insert_city(
-                db,
-                name=user_in_create.employee.city.name,
-                region=user_in_create.employee.city.region,
-            )
-            city_id = city.id
-        elif isinstance(user_in_create.employee.city, CityInReference):
-            city_id = user_in_create.employee.city.id
-        else:
-            assert False
-
-        employee = await insert_employee(
+    try:
+        user = await insert_user(
             db,
+            username=user_in_create.username,
+            password_hash=ph.hash(user_in_create.password),
             employee_type_id=user_in_create.employee.employee_type.id,
-            first_name=user_in_create.employee.first_name,
-            middle_name=user_in_create.employee.middle_name,
-            last_name=user_in_create.employee.last_name,
-            city_id=city_id,
+            employee_first_name=user_in_create.employee.first_name,
+            employee_middle_name=user_in_create.employee.middle_name,
+            employee_last_name=user_in_create.employee.last_name,
+            employee_city_id=user_in_create.employee.city.id,
         )
+    except UsernameAlreadyExistsError:
+        raise _HTTP_409_USERNAME_ALREADY_EXISTS
 
-        try:
-            user = await insert_user(
-                db,
-                username=user_in_create.username,
-                password_hash=ph.hash(user_in_create.password),
-                employee_id=employee.id,
-            )
-        except UsernameAlreadyExistsError:
-            raise _HTTP_409_USERNAME_ALREADY_EXISTS
+    return user_to_user_out(user)
 
-    return _user_out_from_user_and_employee(user, employee)
+
+@router.put("/users/current", response_model=UserOut)
+async def update_current_user(
+    user_in_update: UserInUpdate,
+    current_user: User = Depends(get_current_user_dependency),
+    db: Connection = Depends(get_db),
+) -> UserOut:
+    try:
+        user = await update_user(
+            db,
+            user_id=current_user.id,
+            username=user_in_update.username,
+            employee_type_id=user_in_update.employee.employee_type.id,
+            employee_first_name=user_in_update.employee.first_name,
+            employee_middle_name=user_in_update.employee.middle_name,
+            employee_last_name=user_in_update.employee.last_name,
+            employee_city_id=user_in_update.employee.city.id,
+        )
+    except UsernameAlreadyExistsError:
+        raise _HTTP_409_USERNAME_ALREADY_EXISTS
+
+    return user_to_user_out(user)
 
 
 @router.put(
@@ -100,31 +102,31 @@ async def update_current_user_password(
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
 ) -> Response:
-    await update_user(
+    await update_user_password_hash(
         db,
         user_id=current_user.id,
-        new_password_hash=ph.hash(user_password_in.password),
+        password_hash=ph.hash(user_password_in.password),
     )
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-def _user_out_from_user_and_employee(user: User, employee: Employee) -> UserOut:
+def user_to_user_out(user: User) -> UserOut:
     return UserOut(
         username=user.username,
         employee=EmployeeOut(
-            id=employee.id,
+            id=user.employee.id,
             employee_type=EmployeeTypeOut(
-                id=employee.employee_type.id,
-                name=employee.employee_type.name,
+                id=user.employee.employee_type.id,
+                name=user.employee.employee_type.name,
             ),
-            first_name=employee.first_name,
-            middle_name=employee.middle_name,
-            last_name=employee.last_name,
+            first_name=user.employee.first_name,
+            middle_name=user.employee.middle_name,
+            last_name=user.employee.last_name,
             city=CityOut(
-                id=employee.city.id,
-                name=employee.city.name,
-                region=employee.city.region,
+                id=user.employee.city.id,
+                name=user.employee.city.name,
+                region=user.employee.city.region,
             ),
         ),
     )

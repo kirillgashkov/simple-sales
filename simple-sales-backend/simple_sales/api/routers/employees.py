@@ -12,10 +12,11 @@ router = APIRouter()
 @router.get("/employees", response_model=list[EmployeeOut])
 async def get_employees(db: Connection = Depends(get_db)) -> list[EmployeeOut]:
     employees = await select_employees(db)
-    return [_employee_out_from_employee(e) for e in employees]
+
+    return [employee_to_employee_out(e) for e in employees]
 
 
-def _employee_out_from_employee(employee: Employee) -> EmployeeOut:
+def employee_to_employee_out(employee: Employee) -> EmployeeOut:
     return EmployeeOut(
         id=employee.id,
         employee_type=EmployeeTypeOut(
