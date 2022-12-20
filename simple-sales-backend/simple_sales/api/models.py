@@ -183,8 +183,15 @@ class EmployeeTypeOutReference(BaseModel):
     id: UUID
 
 
-class EmployeeIn(BaseModel):
+class EmployeeInCreate(BaseModel):
     employee_type: EmployeeTypeInReference
+    first_name: str
+    middle_name: str | None
+    last_name: str
+    city: CityInReference
+
+
+class EmployeeInUpdate(BaseModel):
     first_name: str
     middle_name: str | None
     last_name: str
@@ -281,12 +288,12 @@ class TaskOutReference(BaseModel):
 class UserInCreate(BaseModel):
     username: str
     password: str
-    employee: EmployeeIn
+    employee: EmployeeInCreate
 
 
 class UserInUpdate(BaseModel):
     username: str
-    employee: EmployeeIn
+    employee: EmployeeInUpdate
 
 
 class UserInReference(BaseModel):
