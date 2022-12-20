@@ -25,11 +25,6 @@ _HTTP_401_INVALID_USERNAME_OR_PASSWORD_EXCEPTION = HTTPException(
     headers=_AUTHENTICATE_HEADERS,
 )
 
-_HTTP_401_INVALID_SESSION_ID_EXCEPTION = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="Invalid session ID",
-)
-
 _HTTP_401_CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Credentials and session ID match different users",
@@ -49,14 +44,24 @@ _HTTP_401_NOT_AUTHENTICATED_EXCEPTION = HTTPException(
 )
 
 
-async def get_current_session(
+async def get_current_session_if_valid(
+    credentials: HTTPBasicCredentials | None = Depends(HTTPBasic(auto_error=False)),
     session_id: UUID = Cookie(..., alias=API_SESSION_ID_COOKIE_NAME),
     db: Connection = Depends(get_db),
-) -> Session:
+    ph: argon2.PasswordHasher = Depends(get_password_hasher),
+) -> Session | None:
     session = await _get_session_if_valid(session_id=session_id, db=db)
-
     if not session:
-        raise _HTTP_401_INVALID_SESSION_ID_EXCEPTION
+        return None
+
+    if credentials:
+        password_authorized_user_id = await _get_password_authorized_user_id(
+            credentials=credentials,
+            db=db,
+            ph=ph,
+        )
+        if password_authorized_user_id != session.user_id:
+            raise _HTTP_401_CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_EXCEPTION
 
     return session
 
