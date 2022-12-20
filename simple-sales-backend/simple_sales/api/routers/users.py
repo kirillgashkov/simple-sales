@@ -19,7 +19,11 @@ from simple_sales.api.models import (
     UserOut,
     UserPasswordIn,
 )
-from simple_sales.db.errors import UsernameAlreadyExistsError
+from simple_sales.db.errors import (
+    ReferencedCityNotFoundError,
+    ReferencedEmployeeTypeNotFoundError,
+    UsernameAlreadyExistsError,
+)
 from simple_sales.db.models import User
 from simple_sales.db.queries.users import (
     insert_user,
@@ -33,6 +37,16 @@ router = APIRouter()
 _HTTP_409_USERNAME_ALREADY_EXISTS = HTTPException(
     status_code=status.HTTP_409_CONFLICT,
     detail="Username already exists",
+)
+
+_HTTP_400_REFERENCED_CITY_DOES_NOT_EXIST = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Referenced city does not exist",
+)
+
+_HTTP_400_REFERENCED_EMPLOYEE_TYPE_DOES_NOT_EXIST = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Referenced employee type does not exist",
 )
 
 
@@ -63,6 +77,10 @@ async def create_user(
         )
     except UsernameAlreadyExistsError:
         raise _HTTP_409_USERNAME_ALREADY_EXISTS
+    except ReferencedCityNotFoundError:
+        raise _HTTP_400_REFERENCED_CITY_DOES_NOT_EXIST
+    except ReferencedEmployeeTypeNotFoundError:
+        raise _HTTP_400_REFERENCED_EMPLOYEE_TYPE_DOES_NOT_EXIST
 
     return user_to_user_out(user)
 
@@ -86,6 +104,10 @@ async def update_current_user(
         )
     except UsernameAlreadyExistsError:
         raise _HTTP_409_USERNAME_ALREADY_EXISTS
+    except ReferencedCityNotFoundError:
+        raise _HTTP_400_REFERENCED_CITY_DOES_NOT_EXIST
+    except ReferencedEmployeeTypeNotFoundError:
+        raise _HTTP_400_REFERENCED_EMPLOYEE_TYPE_DOES_NOT_EXIST
 
     return user_to_user_out(user)
 

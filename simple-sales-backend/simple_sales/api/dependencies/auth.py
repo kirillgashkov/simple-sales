@@ -84,11 +84,11 @@ async def get_current_user(
     if session_id:
         session = await _get_session_if_valid(session_id=session_id, db=db)
 
-    if credentials and session:
+    if password_authorized_user_id and session:
         if password_authorized_user_id != session.user_id:
             raise _HTTP_401_CREDENTIALS_AND_SESSION_ID_MATCH_DIFFERENT_USERS_EXCEPTION
 
-    if credentials:
+    if password_authorized_user_id:
         user_id = password_authorized_user_id
     elif session:
         user_id = session.user_id
