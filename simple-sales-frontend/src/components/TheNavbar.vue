@@ -52,12 +52,12 @@ import { RouterLink } from "vue-router";
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-primary">
+            <RouterLink class="button is-primary" :to="{ name: 'sign-up' }">
               <strong>Зарегистрироваться</strong>
-            </a>
-            <a class="button">
+            </RouterLink>
+            <RouterLink class="button" :to="{ name: 'sign-in' }">
               Войти
-            </a>
+            </RouterLink>
           </div>
         </div>
       </div>
