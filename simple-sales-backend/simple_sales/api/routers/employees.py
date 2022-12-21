@@ -23,7 +23,7 @@ _HTTP_403_NOT_A_MANAGER_EXCEPTION = HTTPException(
 
 
 class EmployeeAction(str, Enum):
-    TASK_ASSIGNMENT = "task_assignment"
+    ASSIGN_TASK_TO = "assign_task_to"
 
 
 @router.get("/employees", response_model=list[EmployeeOut])
@@ -34,7 +34,7 @@ async def get_employees(
     db: Connection = Depends(get_db)
 ) -> list[EmployeeOut]:
     if choices_for:
-        if choices_for == EmployeeAction.TASK_ASSIGNMENT:
+        if choices_for == EmployeeAction.ASSIGN_TASK_TO:
             if not user:
                 raise _HTTP_403_NOT_A_MANAGER_EXCEPTION
 
