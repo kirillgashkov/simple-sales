@@ -22,6 +22,14 @@ version:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" version
 .PHONY: version
 
+create-roles:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_roles.sql"
+.PHONY: create-roles
+
+drop-roles:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_roles.sql"
+.PHONY: drop-roles
+
 create-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_database.sql"
 .PHONY: create-db
