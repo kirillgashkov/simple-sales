@@ -51,18 +51,22 @@ export default {
         }
       }
 
-      http.post(sessions_url, sessions_payload, sessions_config).then((response) => {
-        http.get("/users/current").then((response) => {
-          const store = useStore();
-          store.setUser(new User(response.data));
-          console.log(store.user);
-          router.push({ name: "home" })
-        }).catch((error) => {
-          this.handleGetCurrentUserError(error);
+      http.post(sessions_url, sessions_payload, sessions_config)
+        .then((response) => {
+          http.get("/users/current")
+            .then((response) => {
+              const store = useStore();
+              store.setUser(new User(response.data));
+              console.log(store.user);
+              router.push({ name: "home" })
+            })
+            .catch((error) => {
+              this.handleGetCurrentUserError(error);
+            })
         })
-      }).catch((error) => {
-        this.handleCreateSessionError(error);
-      })
+        .catch((error) => {
+          this.handleCreateSessionError(error);
+        })
     },
     handleCreateSessionError(error) {
       const status_code = error.response && error.response.status;
@@ -87,6 +91,14 @@ export default {
         isFormError: false,
       });
     },
+  },
+  beforeRouteEnter(to, from, next) {
+    const store = useStore();
+    if (store.user) {
+      next({ name: "home" });
+      return;
+    }
+    next();
   },
 }
 </script>
