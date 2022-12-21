@@ -98,3 +98,18 @@ connect-as-manager: connect-as-michael
 
 connect-as-salesperson: connect-as-dwight
 .PHONY: connect-as-salesperson
+
+# These are temporary, probably will be merged with create/drop roles later.
+#
+# Warning: when merging don't forget that we need to connect to the main
+# database. We could utilize '\connect' in the create/drop roles scripts.
+
+# Notice that we have to connect to the main database here.
+grant-privileges:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_grant_privileges.sql"
+.PHONY: create-privileges
+
+# Notice that we have to connect to the main database here.
+revoke-privileges:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_revoke_privileges.sql"
+.PHONY: drop-privileges
