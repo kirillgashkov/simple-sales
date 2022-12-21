@@ -1,6 +1,6 @@
 <script>
 import http from "../http"
-import { useUsersStore } from "../store/users"
+import { useUsersStore } from "../stores/users"
 import router from "../router"
 
 
