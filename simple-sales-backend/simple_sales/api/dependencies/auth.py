@@ -72,12 +72,12 @@ async def get_current_session_if_valid(
     return session
 
 
-async def get_current_user(
+async def get_current_user_if_exists(
     credentials: HTTPBasicCredentials | None = Depends(HTTPBasic(auto_error=False)),
     session_id: UUID | None = Cookie(None, alias=API_SESSION_ID_COOKIE_NAME),
     db: Connection = Depends(get_db),
     ph: argon2.PasswordHasher = Depends(get_password_hasher),
-) -> User:
+) -> User | None:
     password_authorized_user_id = None
     if credentials:
         password_authorized_user_id = await _get_password_authorized_user_id(
@@ -99,10 +99,19 @@ async def get_current_user(
     elif session:
         user_id = session.user_id
     else:
-        raise _HTTP_401_NOT_AUTHENTICATED_EXCEPTION
+        return None
 
     user = await select_user(db, user_id=user_id)
     assert user is not None
+
+    return user
+
+
+async def get_current_user(
+    user: User | None = Depends(get_current_user_if_exists),
+) -> User:
+    if not user:
+        raise _HTTP_401_NOT_AUTHENTICATED_EXCEPTION
 
     return user
 
