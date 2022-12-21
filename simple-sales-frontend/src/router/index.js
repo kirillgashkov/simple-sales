@@ -77,15 +77,15 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   const usersStore = useUsersStore();
 
-  if (!usersStore.isUserLoaded) {
-    usersStore.loadUser();
-  }
+  if (!usersStore.didLoadUser) {
+    await usersStore.loadUser()
 
-  if (!usersStore.user && to.name !== "sign-in") {
-    return { name: "sign-in" };
+    if (!usersStore.user && to.name !== "sign-in") {
+      return { name: "sign-in" };
+    }
   }
 });
 
