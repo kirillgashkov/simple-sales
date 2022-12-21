@@ -21,39 +21,39 @@ CREATE ROLE it_guy WITH
     CREATEDB
     CREATEROLE;
 
-GRANT it_guy TO simple_sales_admin;
+GRANT simple_sales_admin TO it_guy;
 
 CREATE ROLE michael WITH
     INHERIT
     LOGIN
     PASSWORD '123';
 
-GRANT michael TO simple_sales_manager;
+GRANT simple_sales_manager TO michael;
 
 CREATE ROLE jan WITH
     INHERIT
     LOGIN
     PASSWORD '123';
 
-GRANT jan TO simple_sales_manager;
+GRANT simple_sales_manager TO jan;
 
 CREATE ROLE dwight WITH
     INHERIT
     LOGIN
     PASSWORD '123';
 
-GRANT dwight TO simple_sales_salesperson;
+GRANT simple_sales_salesperson TO dwight;
 
 CREATE ROLE jim WITH
     INHERIT
     LOGIN
     PASSWORD '123';
 
-GRANT jim TO simple_sales_salesperson;
+GRANT simple_sales_salesperson TO jim;
 
 CREATE ROLE pam WITH
     INHERIT
     LOGIN
     PASSWORD '123';
 
-GRANT pam TO simple_sales_salesperson;
+GRANT simple_sales_salesperson TO pam;
