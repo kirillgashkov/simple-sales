@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from asyncpg import Connection, Record
 
 from simple_sales.db.models import City, Employee, EmployeeType
@@ -43,8 +41,8 @@ async def select_employees(db: Connection) -> list[Employee]:
     return [row_to_employee(row) for row in rows]
 
 
-async def select_employees_by_employee_type_id(
-    db: Connection, *, employee_type_id: UUID
+async def select_employees_by_employee_type_name(
+    db: Connection, *, employee_type_name: str
 ) -> list[Employee]:
     rows = await db.fetch(
         """
@@ -61,9 +59,9 @@ async def select_employees_by_employee_type_id(
         FROM employees
         JOIN employee_types ON employee_types.id = employees.employee_type_id
         JOIN cities ON cities.id = employees.city_id
-        WHERE employee_types.id = $1
+        WHERE employee_types.name = $1
         """,
-        employee_type_id,
+        employee_type_name,
     )
 
     def row_to_employee(row: Record) -> Employee:
