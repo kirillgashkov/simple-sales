@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { RouterLink } from "vue-router";
 
-import http from "../http";
+import axios from "../api/axios";
 import { useUsersStore } from "../stores/users";
 import router from "../router";
 
@@ -17,7 +17,7 @@ const user_display_name = computed(
 );
 
 async function signOut() {
-  await http.delete("/sessions/current");
+  await axios.delete("/sessions/current");
   usersStore.removeUser(null);
   router.push({ name: "home" });
 }

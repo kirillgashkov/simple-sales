@@ -1,4 +1,4 @@
-import http from "../http";
+import axios from "./axios";
 import { Employee } from "../api/models";
 
 
@@ -11,7 +11,7 @@ export class Choice {
 
 
 export function getEmployeeTypeChoices() {
-  return http.get("/employee-types")
+  return axios.get("/employee-types")
     .then((response) => {
       return response.data.map((employeeTypeJson) => {
         const employeeType = new EmployeeType(employeeTypeJson);
@@ -39,7 +39,7 @@ export function getEmployeeTypeChoices() {
 
 
 export function getCityChoices() {
-  return http.get("/cities")
+  return axios.get("/cities")
     .then((response) => {
       return response.data.map((cityJson) => {
         const city = new City(cityJson);
@@ -64,7 +64,7 @@ export function getCityChoices() {
 
 
 export function getAssignTaskToEmployeeChoices() {
-  return http.get("/employees?choices_for=assign_task_to")
+  return axios.get("/employees?choices_for=assign_task_to")
     .then((response) => {
       const employees = response.data.map((employeeJson) => new Employee(employeeJson));
 

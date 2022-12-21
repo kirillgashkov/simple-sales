@@ -1,5 +1,5 @@
 <script>
-import http from "../http"
+import axios from "../api/axios"
 import { useUsersStore } from "../stores/users"
 import router from "../router"
 
@@ -50,7 +50,7 @@ export default {
         }
       }
 
-      http.post(sessions_url, sessions_payload, sessions_config)
+      axios.post(sessions_url, sessions_payload, sessions_config)
         .then((response) => {
           const usersStore = useUsersStore();
           usersStore.loadUser()
