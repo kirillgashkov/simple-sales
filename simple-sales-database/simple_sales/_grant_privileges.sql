@@ -31,8 +31,14 @@ GRANT ALL PRIVILEGES ON ALL ROUTINES IN SCHEMA public TO simple_sales_admin;
 --
 
 
+GRANT CONNECT ON DATABASE simple_sales TO simple_sales_manager;
+
+
 --
 -- simple_sales_salesperson
 --
+
+
+GRANT CONNECT ON DATABASE simple_sales TO simple_sales_salesperson;
 
 COMMIT;
