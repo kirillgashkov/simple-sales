@@ -1,5 +1,5 @@
 import axios from "./axios";
-import { Employee } from "../api/models";
+import { Employee, EmployeeType, City } from "../api/models";
 
 
 export class Choice {
@@ -26,7 +26,7 @@ export async function getEmployeeTypeChoices() {
           break;
       }
 
-      return Choice({
+      return new Choice({
         id: employeeType.id,
         displayName: displayName,
       });
@@ -50,7 +50,7 @@ export async function getCityChoices() {
         displayName = city.name;
       }
 
-      return Choice({
+      return new Choice({
         id: city.id,
         displayName: displayName,
       });
@@ -112,20 +112,20 @@ export async function getAssignTaskToEmployeeChoices() {
       const fullNameCity_2 = getFullNameCity(employee_5);
 
       if (fullNameCounts.get(fullName_2) <= 1) {
-        return Choice({
+        return new Choice({
           id: employee_5.id,
           displayName: fullName_2,
         });
       }
 
       if (fullNameCityCounts.get(fullNameCity_2) <= 1) {
-        return Choice({
+        return new Choice({
           id: employee_5.id,
           displayName: fullNameCity_2,
         });
       }
 
-      return Choice({
+      return new Choice({
         id: employee_5.id,
         displayName: `${fullNameCity_2} (${employee_5.id})`,
       });
