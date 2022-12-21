@@ -1,13 +1,91 @@
 <script>
+import http from "../http"
+import { useStore } from "../store"
+import { User } from "../models"
+import router from "../router"
+
+
+class SignInError {
+  constructor({ message, isFormError }) {
+    this.message = message;
+    this.isFormError = isFormError;
+  }
+}
+
+
 export default {
   data() {
     return {
       username: "",
       password: "",
+      error: null
     }
   },
   methods: {
     signIn() {
+      this.error = null;
+
+      if (this.username === "") {
+        this.error = new SignInError({
+          message: "Имя пользователя не может быть пустым",
+          isFormError: true,
+        });
+        return;
+      }
+
+      if (this.password === "") {
+        this.error = new SignInError({
+          message: "Пароль не может быть пустым",
+          isFormError: true,
+        });
+        return;
+      }
+
+      const sessions_url = "/sessions"
+      const sessions_payload = {}
+      const sessions_config = {
+        // Authorization: Basic
+        auth: {
+          username: this.username,
+          password: this.password,
+        }
+      }
+
+      http.post(sessions_url, sessions_payload, sessions_config).then((response) => {
+        http.get("/users/current").then((response) => {
+          const store = useStore();
+          store.setUser(new User(response.data));
+          console.log(store.user);
+          router.push({ name: "home" })
+        }).catch((error) => {
+          this.handleGetCurrentUserError(error);
+        })
+      }).catch((error) => {
+        this.handleCreateSessionError(error);
+      })
+    },
+    handleCreateSessionError(error) {
+      const status_code = error.response && error.response.status;
+
+      if (status_code === 401) {
+        this.error = new SignInError({
+          message: "Неверное имя пользователя или пароль",
+          isFormError: true,
+        });
+      } else {
+        console.error(error)
+        this.error = new SignInError({
+          message: "Неизвестная ошибка",
+          isFormError: false,
+        });
+      }
+    },
+    handleGetCurrentUserError(error) {
+      console.error(error);
+      this.error = new SignInError({
+        message: "Неизвестная ошибка",
+        isFormError: false,
+      });
     },
   },
 }
@@ -31,6 +109,13 @@ export default {
               <label class="label">Пароль</label>
               <div class="control">
                 <input class="input" type="password" placeholder="********" v-model="password">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <div class="has-text-danger" v-if="error">
+                  {{ error.message }}
+                </div>
               </div>
             </div>
             <div class="field">
