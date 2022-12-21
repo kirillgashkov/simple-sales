@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUsersStore } from "../store/users";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +75,18 @@ const router = createRouter({
       component: () => import("../views/ReportsView.vue"),
     },
   ],
+});
+
+router.beforeEach((to, from) => {
+  const usersStore = useUsersStore();
+
+  if (!usersStore.isUserLoaded) {
+    usersStore.loadUser();
+  }
+
+  if (!usersStore.user && to.name !== "sign-in") {
+    return { name: "sign-in" };
+  }
 });
 
 export default router;
