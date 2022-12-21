@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import http from "../http";
+import axios from "../api/axios";
 import { User } from "../api/models";
 
 export const useUsersStore = defineStore("users", {
@@ -10,7 +10,7 @@ export const useUsersStore = defineStore("users", {
   },
   actions: {
     async loadUser() {
-      await http.get("/users/current")
+      await axios.get("/users/current")
         .then((response) => {
           this.user = new User(response.data);
         })
