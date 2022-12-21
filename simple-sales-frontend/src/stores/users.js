@@ -6,12 +6,11 @@ export const useUsersStore = defineStore("users", {
   state: () => {
     return {
       user: null,
-      didLoadUser: false,
     }
   },
   actions: {
-    loadUser() {
-      return http.get("/users/current")
+    async loadUser() {
+      await http.get("/users/current")
         .then((response) => {
           this.user = new User(response.data);
         })
@@ -21,12 +20,9 @@ export const useUsersStore = defineStore("users", {
           if (status_code === 401) {
             this.user = null;
           } else {
-            console.error(error)
+            console.error(error);
           }
         })
-        .then(() => {
-          this.didLoadUser = true;
-        });
     },
     removeUser() {
       this.user = null;
