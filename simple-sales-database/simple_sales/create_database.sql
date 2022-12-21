@@ -1,1 +1,3 @@
 CREATE DATABASE simple_sales;
+
+REVOKE CONNECT ON DATABASE simple_sales FROM PUBLIC;
