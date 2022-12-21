@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import http from "../http";
-import { User } from "../models";
+import { User } from "../api/models";
 
 export const useUsersStore = defineStore("users", {
   state: () => {
