@@ -9,10 +9,13 @@ export const useUsersStore = defineStore("users", {
     }
   },
   actions: {
+    async setUser(user) {
+      this.user = user;
+    },
     async loadUser() {
       await axios.get("/users/current")
         .then((response) => {
-          this.user = new User(response.data);
+          this.setUser(new User(response.data));
         })
         .catch((error) => {
           const status_code = error.response && error.response.status;
