@@ -1,7 +1,6 @@
 <script>
 import http from "../http"
-import { useStore } from "../store"
-import { User } from "../models"
+import { useUsersStore } from "../store/users"
 import router from "../router"
 
 
@@ -53,15 +52,14 @@ export default {
 
       http.post(sessions_url, sessions_payload, sessions_config)
         .then((response) => {
-          http.get("/users/current")
-            .then((response) => {
-              const store = useStore();
-              store.setUser(new User(response.data));
-              console.log(store.user);
-              router.push({ name: "home" })
-            })
-            .catch((error) => {
-              this.handleGetCurrentUserError(error);
+          const usersStore = useUsersStore();
+          usersStore.loadUser()
+            .then(() => {
+              if (!usersStore.user) {
+                this.handleFailedUserLoad();
+                return;
+              }
+              router.push({ name: "home" });
             })
         })
         .catch((error) => {
@@ -84,21 +82,12 @@ export default {
         });
       }
     },
-    handleGetCurrentUserError(error) {
-      console.error(error);
+    handleFailedUserLoad() {
       this.error = new SignInError({
         message: "Неизвестная ошибка",
         isFormError: false,
       });
     },
-  },
-  beforeRouteEnter(to, from, next) {
-    const store = useStore();
-    if (store.user) {
-      next({ name: "home" });
-      return;
-    }
-    next();
   },
 }
 </script>
