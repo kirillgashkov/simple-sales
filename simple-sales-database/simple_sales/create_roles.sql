@@ -16,7 +16,10 @@ WITH
 CREATE ROLE it_guy WITH
     INHERIT
     LOGIN
-    PASSWORD '123';
+    PASSWORD '123'
+    -- CREATE DB and CREATE ROLE are not inherited by default
+    CREATEDB
+    CREATEROLE;
 
 GRANT it_guy TO simple_sales_admin;
 
