@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from typing import Awaitable, Callable
+
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from simple_sales.api.dependencies.db import db
@@ -20,6 +22,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def remove_authenticate_basic_for_frontend(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    response = await call_next(request)
+
+    is_request_from_frontend = (
+        request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    )
+    is_response_with_authenticate_basic = (
+        response.headers.get("WWW-Authenticate") == "Basic"
+    )
+
+    if is_request_from_frontend and is_response_with_authenticate_basic:
+        del response.headers["WWW-Authenticate"]
+
+    return response
 
 
 @app.on_event("startup")
