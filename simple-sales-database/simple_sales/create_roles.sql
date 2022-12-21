@@ -2,8 +2,7 @@ CREATE ROLE simple_sales_admin
 WITH
     NOINHERIT
     CREATEDB
-    CREATEROLE
-    BYPASSRLS;
+    CREATEROLE;
 
 CREATE ROLE simple_sales_manager
 WITH
