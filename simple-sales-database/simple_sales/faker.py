@@ -315,6 +315,7 @@ def generate_employees(
         full_name = generate_full_name()
         employees.append(
             {
+                "id": uuid.uuid4(),
                 "employee_type_id": manager_employee_type_id,
                 "first_name": full_name["first_name"],
                 "middle_name": full_name["middle_name"],
@@ -327,6 +328,7 @@ def generate_employees(
         full_name = generate_full_name()
         employees.append(
             {
+                "id": uuid.uuid4(),
                 "employee_type_id": salesperson_employee_type_id,
                 "first_name": full_name["first_name"],
                 "middle_name": full_name["middle_name"],
