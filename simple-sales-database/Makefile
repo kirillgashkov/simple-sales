@@ -133,3 +133,13 @@ create-policies:
 drop-policies:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_drop_policies.sql"
 .PHONY: drop-policies
+
+# Notice that we have to connect to the main database here.
+insert-data:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_insert_data.sql"
+.PHONY: insert-data
+
+# Notice that we have to connect to the main database here.
+delete-data:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_delete_data.sql"
+.PHONY: delete-data
