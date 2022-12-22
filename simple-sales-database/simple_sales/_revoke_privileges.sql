@@ -56,6 +56,45 @@ FROM simple_sales_manager;
 --
 
 
+REVOKE INSERT
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+FROM simple_sales_manager;
+
+
+REVOKE UPDATE
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+FROM simple_sales_manager;
+
+
+REVOKE DELETE
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+FROM simple_sales_manager;
+
+
 REVOKE UPDATE (completed_at)
 ON tasks
 FROM simple_sales_employee;
