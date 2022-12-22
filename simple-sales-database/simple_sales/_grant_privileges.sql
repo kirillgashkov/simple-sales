@@ -108,6 +108,69 @@ ON tasks
 TO simple_sales_manager;
 
 
+GRANT INSERT
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+TO simple_sales_manager;
+
+REVOKE INSERT (id)
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+FROM simple_sales_manager;
+
+
+GRANT UPDATE
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+TO simple_sales_manager;
+
+REVOKE UPDATE (id)
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+FROM simple_sales_manager;
+
+
+GRANT DELETE
+ON
+    addresses,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    product_models,
+    products,
+    task_types
+TO simple_sales_manager;
+
+
 --
 -- Role: "simple_sales_salesperson"
 --
