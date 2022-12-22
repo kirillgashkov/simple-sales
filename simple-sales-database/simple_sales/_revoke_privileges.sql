@@ -17,7 +17,7 @@ BEGIN;
 
 REVOKE
     SELECT
-ON TABLE
+ON
     addresses,
     cities,
     clients,
@@ -28,9 +28,12 @@ ON TABLE
     employees,
     product_models,
     products,
+    -- schema_migrations,
+    -- sessions,
     task_priorities,
     task_types,
     tasks
+    -- users
 FROM
     simple_sales_employee;
 

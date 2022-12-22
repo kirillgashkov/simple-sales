@@ -33,10 +33,9 @@ GRANT ALL PRIVILEGES ON ALL ROUTINES IN SCHEMA public TO simple_sales_admin;
 
 GRANT CONNECT ON DATABASE simple_sales TO simple_sales_employee;
 
-
 GRANT
     SELECT
-ON TABLE
+ON
     addresses,
     cities,
     clients,
@@ -47,9 +46,12 @@ ON TABLE
     employees,
     product_models,
     products,
+    -- schema_migrations,
+    -- sessions,
     task_priorities,
     task_types,
     tasks
+    -- users
 TO
     simple_sales_employee;
 
