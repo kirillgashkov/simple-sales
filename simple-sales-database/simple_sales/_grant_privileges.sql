@@ -33,6 +33,7 @@ GRANT ALL PRIVILEGES ON ALL ROUTINES IN SCHEMA public TO simple_sales_admin;
 
 GRANT CONNECT ON DATABASE simple_sales TO simple_sales_employee;
 
+
 GRANT
     SELECT
 ON
@@ -56,9 +57,55 @@ TO
     simple_sales_employee;
 
 
+GRANT UPDATE (completed_at)
+ON tasks
+TO simple_sales_employee;
+
+
 --
 -- Role: "simple_sales_manager"
 --
+
+
+GRANT INSERT (
+    -- id,
+    task_type_id,
+    task_priority_id,
+    note,
+    contact_id,
+    contract_number,
+    product_serial_number,
+    -- created_at,
+    due_at,
+    -- completed_at,
+    created_by,
+    assigned_to
+)
+ON tasks
+TO simple_sales_manager;
+
+
+GRANT UPDATE (
+    -- id,
+    task_type_id,
+    task_priority_id,
+    note,
+    contact_id,
+    contract_number,
+    product_serial_number,
+    -- created_at,
+    due_at,
+    completed_at,
+    created_by,
+    assigned_to
+)
+ON tasks
+TO simple_sales_manager;
+
+
+GRANT DELETE
+ON tasks
+TO simple_sales_manager;
 
 
 --

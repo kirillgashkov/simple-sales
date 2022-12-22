@@ -10,9 +10,55 @@ BEGIN;
 --
 
 
+REVOKE DELETE
+ON tasks
+FROM simple_sales_manager;
+
+
+REVOKE UPDATE (
+    -- id,
+    task_type_id,
+    task_priority_id,
+    note,
+    contact_id,
+    contract_number,
+    product_serial_number,
+    -- created_at,
+    due_at,
+    completed_at,
+    created_by,
+    assigned_to
+)
+ON tasks
+FROM simple_sales_manager;
+
+
+REVOKE INSERT (
+    -- id,
+    task_type_id,
+    task_priority_id,
+    note,
+    contact_id,
+    contract_number,
+    product_serial_number,
+    -- created_at,
+    due_at,
+    -- completed_at,
+    created_by,
+    assigned_to
+)
+ON tasks
+FROM simple_sales_manager;
+
+
 --
 -- Role: "simple_sales_employee" (includes "simple_sales_manager" and "simple_sales_salesperson")
 --
+
+
+REVOKE UPDATE (completed_at)
+ON tasks
+FROM simple_sales_employee;
 
 
 REVOKE
