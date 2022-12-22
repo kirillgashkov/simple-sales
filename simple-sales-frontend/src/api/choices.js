@@ -26,7 +26,7 @@ export function getEmployeeTypeChoices() {
             break;
         }
 
-        return Choice({
+        return new Choice({
           id: employeeType.id,
           displayName: displayName,
         });
@@ -51,7 +51,7 @@ export function getCityChoices() {
           displayName = city.name;
         }
 
-        return Choice({
+        return new Choice({
           id: city.id,
           displayName: displayName,
         });
@@ -115,20 +115,20 @@ export function getAssignTaskToEmployeeChoices() {
         const fullNameCity = getFullNameCity(employee);
 
         if (fullNameCounts.get(fullName) <= 1) {
-          return Choice({
+          return new Choice({
             id: employee.id,
             displayName: fullName,
           });
         }
 
         if (fullNameCityCounts.get(fullNameCity) <= 1) {
-          return Choice({
+          return new Choice({
             id: employee.id,
             displayName: fullNameCity,
           });
         }
 
-        return Choice({
+        return new Choice({
           id: employee.id,
           displayName: `${fullNameCity} (${employee.id})`,
         });
