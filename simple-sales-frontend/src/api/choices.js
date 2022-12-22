@@ -10,127 +10,131 @@ export class Choice {
 }
 
 
-export async function getEmployeeTypeChoices() {
-  try {
-    const response = await axios.get("/employee-types");
-    return response.data.map((employeeTypeJson) => {
-      const employeeType = new EmployeeType(employeeTypeJson);
+export function getEmployeeTypeChoices() {
+  return axios.get("/employee-types")
+    .then((response) => {
+      return response.data.map((employeeTypeJson) => {
+        const employeeType = new EmployeeType(employeeTypeJson);
 
-      let displayName = employeeType.name;
-      switch (employeeType.name) {
-        case "manager":
-          displayName = "Менеджер";
-          break;
-        case "salesperson":
-          displayName = "Продавец";
-          break;
-      }
+        let displayName = employeeType.name;
+        switch (employeeType.name) {
+          case "manager":
+            displayName = "Менеджер";
+            break;
+          case "salesperson":
+            displayName = "Продавец";
+            break;
+        }
 
-      return Choice({
-        id: employeeType.id,
-        displayName: displayName,
+        return Choice({
+          id: employeeType.id,
+          displayName: displayName,
+        });
       });
+    })
+    .catch((error) => {
+      console.log(error);
     });
-  } catch (error) {
-    console.log(error);
-  }
 }
 
 
-export async function getCityChoices() {
-  try {
-    const response = await axios.get("/cities");
-    return response.data.map((cityJson) => {
-      const city = new City(cityJson);
+export function getCityChoices() {
+  return axios.get("/cities")
+    .then((response) => {
+      return response.data.map((cityJson) => {
+        const city = new City(cityJson);
 
-      let displayName;
-      if (city.region) {
-        displayName = `${city.name}, ${city.region}`;
-      } else {
-        displayName = city.name;
-      }
+        let displayName;
+        if (city.region) {
+          displayName = `${city.name}, ${city.region}`;
+        } else {
+          displayName = city.name;
+        }
 
-      return Choice({
-        id: city.id,
-        displayName: displayName,
+        return Choice({
+          id: city.id,
+          displayName: displayName,
+        });
       });
+    })
+    .catch((error) => {
+      console.log(error);
     });
-  } catch (error) {
-    console.log(error);
-  }
 }
 
 
-export async function getAssignTaskToEmployeeChoices() {
-  try {
-    const response = await axios.get("/employees?choices_for=assign_task_to");
-    const employees = response.data.map((employeeJson) => new Employee(employeeJson));
+export function getAssignTaskToEmployeeChoices() {
+  return axios.get("/employees?choices_for=assign_task_to")
+    .then((response) => {
+      const employees = response.data.map((employeeJson) => new Employee(employeeJson));
 
-    const fullNameCounts = new Map();
-    const fullNameCityCounts = new Map();
+      const fullNameCounts = new Map();
+      const fullNameCityCounts = new Map();
 
-    function getFullName(employee) {
-      let fullName;
-      if (employee.middle_name) {
-        fullName = `${employee.last_name} ${employee.first_name} ${employee.middle_name}`;
-      } else {
-        fullName = `${employee.last_name} ${employee.first_name}`;
+      function getFullName(employee) {
+        let fullName;
+        if (employee.middle_name) {
+          fullName = `${employee.last_name} ${employee.first_name} ${employee.middle_name}`;
+        } else {
+          fullName = `${employee.last_name} ${employee.first_name}`;
+        }
+
+        return fullName;
       }
 
-      return fullName;
-    }
+      function getFullNameCity(employee) {
+        let fullNameCity;
+        if (employee.city.region) {
+          fullNameCity = `${fullName}, ${employee.city.name}, ${employee.city.region}`;
+        } else {
+          fullNameCity = `${fullName}, ${employee.city.name}`;
+        }
 
-    function getFullNameCity(employee_1) {
-      let fullNameCity;
-      if (employee_1.city.region) {
-        fullNameCity = `${fullName}, ${employee_1.city.name}, ${employee_1.city.region}`;
-      } else {
-        fullNameCity = `${fullName}, ${employee_1.city.name}`;
+        return fullNameCity;
       }
 
-      return fullNameCity;
-    }
+      employees.foreach((employee) => {
+        const fullName = getFullName(employee);
+        const fullNameCity = getFullNameCity(employee);
 
-    employees.foreach((employee_2) => {
-      const fullName_1 = getFullName(employee_2);
-      const fullNameCity_1 = getFullNameCity(employee_2);
+        if (fullNameCounts.has(fullName)) {
+          fullNameCounts.set(fullName, fullNameCounts.get(fullName) + 1);
+        } else {
+          fullNameCounts.set(fullName, 1);
+        }
 
-      if (fullNameCounts.has(fullName_1)) {
-        fullNameCounts.set(fullName_1, fullNameCounts.get(fullName_1) + 1);
-      } else {
-        fullNameCounts.set(fullName_1, 1);
-      }
+        if (fullNameCityCounts.has(fullNameCity)) {
+          fullNameCityCounts.set(fullNameCity, fullNameCityCounts.get(fullNameCity) + 1);
+        } else {
+          fullNameCityCounts.set(fullNameCity, 1);
+        }
+      })
 
-      if (fullNameCityCounts.has(fullNameCity_1)) {
-        fullNameCityCounts.set(fullNameCity_1, fullNameCityCounts.get(fullNameCity_1) + 1);
-      } else {
-        fullNameCityCounts.set(fullNameCity_1, 1);
-      }
-    });
-    return employees.map((employee_5) => {
-      const fullName_2 = getFullName(employee_5);
-      const fullNameCity_2 = getFullNameCity(employee_5);
+      return employees.map((employee) => {
+        const fullName = getFullName(employee);
+        const fullNameCity = getFullNameCity(employee);
 
-      if (fullNameCounts.get(fullName_2) <= 1) {
+        if (fullNameCounts.get(fullName) <= 1) {
+          return Choice({
+            id: employee.id,
+            displayName: fullName,
+          });
+        }
+
+        if (fullNameCityCounts.get(fullNameCity) <= 1) {
+          return Choice({
+            id: employee.id,
+            displayName: fullNameCity,
+          });
+        }
+
         return Choice({
-          id: employee_5.id,
-          displayName: fullName_2,
+          id: employee.id,
+          displayName: `${fullNameCity} (${employee.id})`,
         });
-      }
-
-      if (fullNameCityCounts.get(fullNameCity_2) <= 1) {
-        return Choice({
-          id: employee_5.id,
-          displayName: fullNameCity_2,
-        });
-      }
-
-      return Choice({
-        id: employee_5.id,
-        displayName: `${fullNameCity_2} (${employee_5.id})`,
       });
+    })
+    .catch((error) => {
+      console.log(error);
     });
-  } catch (error) {
-    console.log(error);
-  }
 }
