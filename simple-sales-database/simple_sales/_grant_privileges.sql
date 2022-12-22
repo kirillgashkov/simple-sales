@@ -125,10 +125,10 @@ ON
     addresses,
     clients,
     contacts,
-    contracts,
-    contracts_products,
+    -- contracts,  -- Does not have an "id" column.
+    -- contracts_products,  -- Does not have an "id" column.
     product_models,
-    products,
+    -- products,  -- Does not have an "id" column.
     task_types
 FROM simple_sales_manager;
 
@@ -150,10 +150,10 @@ ON
     addresses,
     clients,
     contacts,
-    contracts,
-    contracts_products,
+    -- contracts,  -- Does not have an "id" column.
+    -- contracts_products,  -- Does not have an "id" column.
     product_models,
-    products,
+    -- products,  -- Does not have an "id" column.
     task_types
 FROM simple_sales_manager;
 
