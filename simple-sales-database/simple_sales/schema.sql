@@ -59,10 +59,43 @@ CREATE TABLE public.database_users (
 
 
 --
--- Name: create_database_user(name, text, text, text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: -
+-- Name: create_database_user(name, text, uuid); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.create_database_user(database_username name, database_password text, employee_type_name text, first_name text, middle_name text, last_name text, city_name text, city_region text DEFAULT NULL::text) RETURNS SETOF public.database_users
+CREATE FUNCTION public.create_database_user(database_username name, database_password text, employee_id uuid) RETURNS SETOF public.database_users
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    employee_type_name text;
+BEGIN
+    EXECUTE format('CREATE ROLE %I WITH INHERIT LOGIN PASSWORD %L', database_username, database_password);
+
+    SELECT employee_types.name INTO STRICT employee_type_name
+    FROM employees
+    JOIN employee_types ON employee_types.id = employees.employee_type_id
+    WHERE employees.id = employee_id;
+
+    IF employee_type_name = 'manager' THEN
+        EXECUTE format('GRANT simple_sales_manager TO %I', database_username);
+    ELSIF employee_type_name = 'salesperson' THEN
+        EXECUTE format('GRANT simple_sales_salesperson TO %I', database_username);
+    ELSE
+        RAISE EXCEPTION 'Unknown employee type: %', employee_type_name;
+    END IF;
+
+    INSERT INTO database_users (role_name, employee_id)
+    VALUES (database_username, employee_id);
+
+    RETURN QUERY SELECT * FROM database_users WHERE role_name = database_username;
+END;
+$$;
+
+
+--
+-- Name: create_database_user_and_employee(name, text, text, text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.create_database_user_and_employee(database_username name, database_password text, employee_type_name text, first_name text, middle_name text, last_name text, city_name text, city_region text DEFAULT NULL::text) RETURNS SETOF public.database_users
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -101,16 +134,17 @@ $$;
 
 
 --
--- Name: create_database_user_from_employee(name, text, uuid); Type: FUNCTION; Schema: public; Owner: -
+-- Name: drop_database_user(name); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.create_database_user_from_employee(database_username name, database_password text, employee_id uuid) RETURNS SETOF public.database_users
+CREATE FUNCTION public.drop_database_user(database_username name) RETURNS SETOF public.database_users
     LANGUAGE plpgsql
     AS $$
 DECLARE
+    database_user database_users;
     employee_type_name text;
 BEGIN
-    EXECUTE format('CREATE ROLE %I WITH INHERIT LOGIN PASSWORD %L', database_username, database_password);
+    DELETE FROM database_users WHERE role_name = database_username RETURNING * INTO STRICT database_user;
 
     SELECT employee_types.name INTO STRICT employee_type_name
     FROM employees
@@ -118,26 +152,25 @@ BEGIN
     WHERE employees.id = database_user.employee_id;
 
     IF employee_type_name = 'manager' THEN
-        EXECUTE format('GRANT simple_sales_manager TO %I', database_username);
+        EXECUTE format('REVOKE simple_sales_manager FROM %I', database_username);
     ELSIF employee_type_name = 'salesperson' THEN
-        EXECUTE format('GRANT simple_sales_salesperson TO %I', database_username);
+        EXECUTE format('REVOKE simple_sales_salesperson FROM %I', database_username);
     ELSE
         RAISE EXCEPTION 'Unknown employee type: %', employee_type_name;
     END IF;
 
-    INSERT INTO database_users (role_name, employee_id)
-    VALUES (database_username, employee_id);
+    EXECUTE format('DROP ROLE %I', database_username);
 
-    RETURN QUERY SELECT * FROM database_users WHERE role_name = database_username;
+    RETURN NEXT database_user;
 END;
 $$;
 
 
 --
--- Name: drop_database_user(name); Type: FUNCTION; Schema: public; Owner: -
+-- Name: drop_database_user_and_employee(name); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.drop_database_user(database_username name) RETURNS SETOF public.database_users
+CREATE FUNCTION public.drop_database_user_and_employee(database_username name) RETURNS SETOF public.database_users
     LANGUAGE plpgsql
     AS $$
 DECLARE
