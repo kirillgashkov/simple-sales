@@ -123,3 +123,13 @@ enable-row-security:
 disable-row-security:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_disable_row_security.sql"
 .PHONY: disable-row-security
+
+# Notice that we have to connect to the main database here.
+create-policies:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_create_policies.sql"
+.PHONY: create-policies
+
+# Notice that we have to connect to the main database here.
+drop-policies:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_drop_policies.sql"
+.PHONY: drop-policies
