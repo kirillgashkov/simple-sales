@@ -27,18 +27,40 @@ GRANT ALL PRIVILEGES ON ALL ROUTINES IN SCHEMA public TO simple_sales_admin;
 
 
 --
--- simple_sales_manager
+-- Role: "simple_sales_employee" (includes "simple_sales_manager" and "simple_sales_salesperson")
 --
 
 
-GRANT CONNECT ON DATABASE simple_sales TO simple_sales_manager;
+GRANT CONNECT ON DATABASE simple_sales TO simple_sales_employee;
+
+
+GRANT
+    SELECT
+ON TABLE
+    addresses,
+    cities,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    employee_types,
+    employees,
+    product_models,
+    products,
+    task_priorities,
+    task_types,
+    tasks
+TO
+    simple_sales_employee;
 
 
 --
--- simple_sales_salesperson
+-- Role: "simple_sales_manager"
 --
 
 
-GRANT CONNECT ON DATABASE simple_sales TO simple_sales_salesperson;
+--
+-- Role: "simple_sales_salesperson"
+--
 
 COMMIT;
