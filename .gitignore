@@ -1,6 +1,7 @@
 .*
 *~
 __pycache__/
+fake_data.sql
 
 !.gitkeep
 !.gitignore
