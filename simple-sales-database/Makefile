@@ -113,3 +113,13 @@ grant-privileges:
 revoke-privileges:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_revoke_privileges.sql"
 .PHONY: drop-privileges
+
+# Notice that we have to connect to the main database here.
+enable-row-security:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_enable_row_security.sql"
+.PHONY: enable-row-security
+
+# Notice that we have to connect to the main database here.
+disable-row-security:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_disable_row_security.sql"
+.PHONY: disable-row-security
