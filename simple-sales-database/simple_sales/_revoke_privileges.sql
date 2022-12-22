@@ -56,6 +56,9 @@ FROM simple_sales_manager;
 --
 
 
+REVOKE SELECT ON database_users FROM simple_sales_employee;
+
+
 REVOKE INSERT
 ON
     addresses,

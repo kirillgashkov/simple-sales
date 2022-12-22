@@ -62,6 +62,9 @@ ON tasks
 TO simple_sales_employee;
 
 
+GRANT SELECT ON database_users TO simple_sales_employee;
+
+
 --
 -- Role: "simple_sales_manager"
 --
