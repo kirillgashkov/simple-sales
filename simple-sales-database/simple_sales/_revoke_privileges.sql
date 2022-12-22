@@ -11,6 +11,34 @@ BEGIN;
 
 
 --
+-- Role: "simple_sales_employee" (includes "simple_sales_manager" and "simple_sales_salesperson")
+--
+
+
+REVOKE
+    SELECT
+ON TABLE
+    addresses,
+    cities,
+    clients,
+    contacts,
+    contracts,
+    contracts_products,
+    employee_types,
+    employees,
+    product_models,
+    products,
+    task_priorities,
+    task_types,
+    tasks
+FROM
+    simple_sales_employee;
+
+
+REVOKE CONNECT ON DATABASE simple_sales FROM simple_sales_employee;
+
+
+--
 -- Role: "simple_sales_admin"
 --
 
