@@ -1,21 +1,21 @@
 -- Temporary roles for development.
 
-REVOKE pam FROM simple_sales_salesperson;
+REVOKE simple_sales_salesperson FROM pam;
 DROP ROLE IF EXISTS pam;
 
-REVOKE jim FROM simple_sales_salesperson;
+REVOKE simple_sales_salesperson FROM jim;
 DROP ROLE IF EXISTS jim;
 
-REVOKE dwight FROM simple_sales_salesperson;
+REVOKE simple_sales_salesperson FROM dwight;
 DROP ROLE IF EXISTS dwight;
 
-REVOKE jan FROM simple_sales_manager;
+REVOKE simple_sales_manager FROM jan;
 DROP ROLE IF EXISTS jan;
 
-REVOKE michael FROM simple_sales_manager;
+REVOKE simple_sales_manager FROM michael;
 DROP ROLE IF EXISTS michael;
 
-REVOKE it_guy FROM simple_sales_admin;
+REVOKE simple_sales_admin FROM it_guy;
 DROP ROLE IF EXISTS it_guy;
 
 
