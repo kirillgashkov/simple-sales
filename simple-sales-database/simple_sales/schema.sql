@@ -30,6 +30,30 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
 
 
+--
+-- Name: get_current_employee_id(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_current_employee_id() RETURNS uuid
+    LANGUAGE sql
+    AS $$
+    SELECT employee_id FROM database_users WHERE role_name = current_user;
+$$;
+
+
+--
+-- Name: is_valid_role_name(name); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_valid_role_name(role_name name) RETURNS boolean
+    LANGUAGE sql
+    AS $$
+    SELECT EXISTS (
+        SELECT 1 FROM pg_roles WHERE rolname = role_name
+    );
+$$;
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -114,6 +138,17 @@ CREATE TABLE public.contracts (
 CREATE TABLE public.contracts_products (
     contract_number text NOT NULL,
     product_serial_number text NOT NULL
+);
+
+
+--
+-- Name: database_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.database_users (
+    role_name name NOT NULL,
+    employee_id uuid NOT NULL,
+    CONSTRAINT valid_role_name CHECK (public.is_valid_role_name(role_name))
 );
 
 
@@ -289,6 +324,14 @@ ALTER TABLE ONLY public.contracts
 
 ALTER TABLE ONLY public.contracts_products
     ADD CONSTRAINT contracts_products_pkey PRIMARY KEY (contract_number, product_serial_number);
+
+
+--
+-- Name: database_users database_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.database_users
+    ADD CONSTRAINT database_users_pkey PRIMARY KEY (role_name);
 
 
 --
@@ -479,6 +522,14 @@ ALTER TABLE ONLY public.contracts_products
 
 ALTER TABLE ONLY public.contracts_products
     ADD CONSTRAINT contracts_products_product_serial_number_fkey FOREIGN KEY (product_serial_number) REFERENCES public.products(serial_number);
+
+
+--
+-- Name: database_users database_users_employee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.database_users
+    ADD CONSTRAINT database_users_employee_id_fkey FOREIGN KEY (employee_id) REFERENCES public.employees(id);
 
 
 --
