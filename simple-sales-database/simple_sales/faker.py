@@ -360,7 +360,7 @@ def generate_tasks(
 ):
     tasks = []
 
-    for salesperson_employee in salesperson_employees:
+    for employee in salesperson_employees + manager_employees:
         for _ in range(random.randint(0, 5)):
             is_product_task = random.choice([True] + [False] * 3)  # 1/4 chance
 
@@ -405,7 +405,7 @@ def generate_tasks(
                     "due_at": due_at,
                     "completed_at": completed_at,
                     "created_by": random.choice(manager_employees)["id"],
-                    "assigned_to": salesperson_employee["id"],
+                    "assigned_to": employee["id"],
                 }
             )
 
