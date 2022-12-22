@@ -340,6 +340,78 @@ def generate_employees(
     return employees
 
 
+def generate_task_types():
+    return [
+        {"id": uuid.uuid4(), "name": "Звонок"},
+        {"id": uuid.uuid4(), "name": "Встреча"},
+        {"id": uuid.uuid4(), "name": "Письмо"},
+        {"id": uuid.uuid4(), "name": "Посещение"},
+    ]
+
+
+def generate_tasks(
+    *,
+    task_types,
+    task_priorities,
+    contacts,
+    manager_employees,
+    salesperson_employees,
+    contracts_products,
+):
+    tasks = []
+
+    for salesperson_employee in salesperson_employees:
+        for _ in range(random.randint(0, 5)):
+            is_product_task = random.choice([True] + [False] * 3)  # 1/4 chance
+
+            if is_product_task:
+                contract_product = random.choice(contracts_products)
+                contract_number = contract_product["contract_number"]
+                product_serial_number = contract_product["product_serial_number"]
+            else:
+                contract_number = None
+                product_serial_number = None
+
+            has_deadline = random.choice([True] * 9 + [False])  # 1/10 chance
+
+            if has_deadline:
+                due_at = datetime.datetime.utcnow() + datetime.timedelta(
+                    days=random.randint(0, 365)
+                )
+            else:
+                due_at = None
+
+            is_completed = random.choice([True] * 9 + [False])  # 1/10 chance
+
+            created_at = datetime.datetime.utcnow() - datetime.timedelta(
+                days=random.randint(0, 365)
+            )
+
+            if is_completed:
+                completed_at = created_at + datetime.timedelta(
+                    days=random.randint(0, 365)
+                )
+
+            tasks.append(
+                {
+                    "id": uuid.uuid4(),
+                    "task_type_id": random.choice(task_types)["id"],
+                    "task_priority_id": random.choice(task_priorities)["id"],
+                    "note": None,
+                    "contact_id": random.choice(contacts)["id"],
+                    "contract_number": contract_number,
+                    "product_serial_number": product_serial_number,
+                    "created_at": created_at,
+                    "due_at": due_at,
+                    "completed_at": completed_at,
+                    "created_by": random.choice(manager_employees)["id"],
+                    "assigned_to": salesperson_employee["id"],
+                }
+            )
+
+    return tasks
+
+
 def generate_insert_statements(data, table_name):
     statements = []
 
@@ -419,6 +491,40 @@ def main():
         "employees",
     )
 
+    task_types, task_types_table = (
+        generate_task_types(),
+        "task_types",
+    )
+
+    manager_employees = [
+        e
+        for e in employees
+        if e["employee_type_id"] == "4cf1d446-8624-4176-9121-18c3b0cca623"
+    ]
+    salesperson_employees = [
+        e
+        for e in employees
+        if e["employee_type_id"] == "fb6b4665-556b-4a12-b7f0-333f73ca6f16"
+    ]
+
+    _task_priorities = [
+        {"id": "6260bf47-9df8-4d42-99f8-eb7feb5a3dd2", "level": 1, "name": "low"},
+        {"id": "897a4f3c-526b-4bd0-9f75-bb79efea9377", "level": 2, "name": "medium"},
+        {"id": "bb82f92d-cb67-4df8-a613-cab6ee7dd392", "level": 3, "name": "high"},
+    ]
+
+    tasks, tasks_table = (
+        generate_tasks(
+            task_types=task_types,
+            task_priorities=_task_priorities,
+            contacts=contacts,
+            manager_employees=manager_employees,
+            salesperson_employees=salesperson_employees,
+            contracts_products=contracts_products,
+        ),
+        "tasks",
+    )
+
     data_table_pairs = [
         (cities, cities_table),
         (addresses, addresses_table),
@@ -429,6 +535,8 @@ def main():
         (contracts, contracts_table),
         (contracts_products, contracts_products_table),
         (employees, employees_table),
+        (task_types, task_types_table),
+        (tasks, tasks_table),
     ]
 
     with open("fake_data.sql", "w") as f:
