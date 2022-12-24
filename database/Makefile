@@ -8,17 +8,17 @@ new-migration:
 	migrate create -dir "./simple_sales/migrations" -ext sql NAME
 .PHONY: new-migration
 
-_migrate: dump-db-schema
+migrate: dump-db-schema
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" up
-.PHONY: _migrate
+.PHONY: migrate
 
-_rollback: dump-db-schema
+rollback: dump-db-schema
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" down 1
-.PHONY: _rollback
+.PHONY: rollback
 
-_force:
+force:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" force -- $(V)
-.PHONY: _force
+.PHONY: force
 
 version:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" version
