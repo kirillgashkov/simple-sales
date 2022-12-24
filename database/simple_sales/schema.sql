@@ -400,6 +400,8 @@ CREATE TABLE public.tasks (
     assigned_to uuid
 );
 
+ALTER TABLE ONLY public.tasks FORCE ROW LEVEL SECURITY;
+
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: -
@@ -818,6 +820,64 @@ ALTER TABLE ONLY public.tasks
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_employee_id_fkey FOREIGN KEY (employee_id) REFERENCES public.employees(id);
 
+
+--
+-- Name: tasks admin_tasks_policy; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY admin_tasks_policy ON public.tasks TO simple_sales_admin USING (true) WITH CHECK (true);
+
+
+--
+-- Name: tasks employee_select_tasks_policy; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY employee_select_tasks_policy ON public.tasks FOR SELECT TO simple_sales_employee USING ((assigned_to = ( SELECT public.get_current_employee_id() AS get_current_employee_id)));
+
+
+--
+-- Name: tasks employee_update_tasks_policy; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY employee_update_tasks_policy ON public.tasks FOR UPDATE TO simple_sales_employee USING (((assigned_to = ( SELECT public.get_current_employee_id() AS get_current_employee_id)) AND (completed_at IS NOT NULL)));
+
+
+--
+-- Name: tasks manager_delete_tasks_policy; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY manager_delete_tasks_policy ON public.tasks FOR DELETE TO simple_sales_manager USING (((created_by = ( SELECT public.get_current_employee_id() AS get_current_employee_id)) AND (completed_at IS NOT NULL)));
+
+
+--
+-- Name: tasks manager_insert_tasks_policy; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY manager_insert_tasks_policy ON public.tasks FOR INSERT TO simple_sales_manager WITH CHECK ((created_by = ( SELECT public.get_current_employee_id() AS get_current_employee_id)));
+
+
+--
+-- Name: tasks manager_select_tasks_policy; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY manager_select_tasks_policy ON public.tasks FOR SELECT TO simple_sales_manager USING (((created_by = ( SELECT public.get_current_employee_id() AS get_current_employee_id)) OR (assigned_to IN ( SELECT employees.id
+   FROM (public.employees
+     JOIN public.employee_types ON ((employees.employee_type_id = employee_types.id)))
+  WHERE (employee_types.name = 'salesperson'::text)))));
+
+
+--
+-- Name: tasks manager_update_tasks_policy; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY manager_update_tasks_policy ON public.tasks FOR UPDATE TO simple_sales_manager USING (((created_by = ( SELECT public.get_current_employee_id() AS get_current_employee_id)) AND (completed_at IS NOT NULL))) WITH CHECK ((created_by = ( SELECT public.get_current_employee_id() AS get_current_employee_id)));
+
+
+--
+-- Name: tasks; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
 
 --
 -- PostgreSQL database dump complete
