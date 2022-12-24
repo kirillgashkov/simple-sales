@@ -82,7 +82,9 @@ USING (
 
 CREATE POLICY admin_tasks_policy
 ON tasks
-FOR SELECT
-TO simple_sales_admin;
+FOR ALL
+TO simple_sales_admin
+USING (TRUE)
+WITH CHECK (TRUE);
 
 COMMIT;
