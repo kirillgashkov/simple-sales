@@ -13,4 +13,4 @@ WORKDIR /app/
 
 COPY ./ /app/
 
-CMD ["bash"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
