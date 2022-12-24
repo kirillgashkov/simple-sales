@@ -880,6 +880,338 @@ CREATE POLICY manager_update_tasks_policy ON public.tasks FOR UPDATE TO simple_s
 ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT ALL ON SCHEMA public TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION is_valid_role_name(role_name name); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.is_valid_role_name(role_name name) TO simple_sales_admin;
+
+
+--
+-- Name: TABLE database_users; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.database_users TO simple_sales_admin;
+GRANT SELECT ON TABLE public.database_users TO simple_sales_employee;
+
+
+--
+-- Name: FUNCTION create_database_user(database_username name, database_password text, employee_id uuid); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.create_database_user(database_username name, database_password text, employee_id uuid) TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION create_database_user_and_employee(database_username name, database_password text, employee_type_name text, first_name text, middle_name text, last_name text, city_name text, city_region text); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.create_database_user_and_employee(database_username name, database_password text, employee_type_name text, first_name text, middle_name text, last_name text, city_name text, city_region text) TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION drop_database_user(database_username name); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.drop_database_user(database_username name) TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION drop_database_user_and_employee(database_username name); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.drop_database_user_and_employee(database_username name) TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION get_current_employee_id(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.get_current_employee_id() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_generate_v1(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_generate_v1() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_generate_v1mc(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_generate_v1mc() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_generate_v3(namespace uuid, name text); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_generate_v3(namespace uuid, name text) TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_generate_v4(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_generate_v4() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_generate_v5(namespace uuid, name text); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_generate_v5(namespace uuid, name text) TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_nil(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_nil() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_ns_dns(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_ns_dns() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_ns_oid(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_ns_oid() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_ns_url(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_ns_url() TO simple_sales_admin;
+
+
+--
+-- Name: FUNCTION uuid_ns_x500(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.uuid_ns_x500() TO simple_sales_admin;
+
+
+--
+-- Name: TABLE addresses; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.addresses TO simple_sales_admin;
+GRANT SELECT ON TABLE public.addresses TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.addresses TO simple_sales_manager;
+
+
+--
+-- Name: TABLE cities; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.cities TO simple_sales_admin;
+GRANT SELECT ON TABLE public.cities TO simple_sales_employee;
+
+
+--
+-- Name: TABLE clients; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.clients TO simple_sales_admin;
+GRANT SELECT ON TABLE public.clients TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.clients TO simple_sales_manager;
+
+
+--
+-- Name: TABLE contacts; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.contacts TO simple_sales_admin;
+GRANT SELECT ON TABLE public.contacts TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.contacts TO simple_sales_manager;
+
+
+--
+-- Name: TABLE contracts; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.contracts TO simple_sales_admin;
+GRANT SELECT ON TABLE public.contracts TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.contracts TO simple_sales_manager;
+
+
+--
+-- Name: TABLE contracts_products; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.contracts_products TO simple_sales_admin;
+GRANT SELECT ON TABLE public.contracts_products TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.contracts_products TO simple_sales_manager;
+
+
+--
+-- Name: TABLE employee_types; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.employee_types TO simple_sales_admin;
+GRANT SELECT ON TABLE public.employee_types TO simple_sales_employee;
+
+
+--
+-- Name: TABLE employees; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.employees TO simple_sales_admin;
+GRANT SELECT ON TABLE public.employees TO simple_sales_employee;
+
+
+--
+-- Name: TABLE product_models; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.product_models TO simple_sales_admin;
+GRANT SELECT ON TABLE public.product_models TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.product_models TO simple_sales_manager;
+
+
+--
+-- Name: TABLE products; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.products TO simple_sales_admin;
+GRANT SELECT ON TABLE public.products TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.products TO simple_sales_manager;
+
+
+--
+-- Name: TABLE schema_migrations; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.schema_migrations TO simple_sales_admin;
+
+
+--
+-- Name: TABLE sessions; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.sessions TO simple_sales_admin;
+
+
+--
+-- Name: TABLE task_priorities; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.task_priorities TO simple_sales_admin;
+GRANT SELECT ON TABLE public.task_priorities TO simple_sales_employee;
+
+
+--
+-- Name: TABLE task_types; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.task_types TO simple_sales_admin;
+GRANT SELECT ON TABLE public.task_types TO simple_sales_employee;
+GRANT INSERT,DELETE,UPDATE ON TABLE public.task_types TO simple_sales_manager;
+
+
+--
+-- Name: TABLE tasks; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.tasks TO simple_sales_admin;
+GRANT SELECT ON TABLE public.tasks TO simple_sales_employee;
+GRANT DELETE ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.task_type_id; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(task_type_id),UPDATE(task_type_id) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.task_priority_id; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(task_priority_id),UPDATE(task_priority_id) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.note; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(note),UPDATE(note) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.contact_id; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(contact_id),UPDATE(contact_id) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.contract_number; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(contract_number),UPDATE(contract_number) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.product_serial_number; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(product_serial_number),UPDATE(product_serial_number) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.due_at; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(due_at),UPDATE(due_at) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.completed_at; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT UPDATE(completed_at) ON TABLE public.tasks TO simple_sales_employee;
+GRANT UPDATE(completed_at) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.created_by; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(created_by),UPDATE(created_by) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: COLUMN tasks.assigned_to; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT INSERT(assigned_to),UPDATE(assigned_to) ON TABLE public.tasks TO simple_sales_manager;
+
+
+--
+-- Name: TABLE users; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.users TO simple_sales_admin;
+
+
+--
 -- PostgreSQL database dump complete
 --
 

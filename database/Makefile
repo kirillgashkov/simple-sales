@@ -1,3 +1,9 @@
+# Note: this dump doesn't include the migration version,
+# although it probably should.
+dump-db-schema:
+	pg_dump -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" --schema-only --no-owner > "./simple_sales/schema.sql"
+.PHONY: dump-db-schema
+
 new-migration:
 	migrate create -dir "./simple_sales/migrations" -ext sql NAME
 .PHONY: new-migration
@@ -21,12 +27,6 @@ _force:
 version:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" version
 .PHONY: version
-
-# Note: this dump doesn't include the migration version,
-# although it probably should.
-dump-db-schema:
-	pg_dump -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" --schema-only --no-privileges --no-owner > "./simple_sales/schema.sql"
-.PHONY: dump-db-schema
 
 migrate: _migrate dump-db-schema
 .PHONY: migrate
