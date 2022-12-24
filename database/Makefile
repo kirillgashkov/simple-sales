@@ -47,49 +47,6 @@ drop-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/1_drop_database.down.sql"
 .PHONY: drop-db
 
-create-roles:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/2_create_roles.up.sql"
-.PHONY: create-roles
-
-drop-roles:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/2_drop_roles.down.sql"
-.PHONY: drop-roles
-
-# These are temporary, probably will be merged with create/drop roles later.
-#
-# Warning: when merging don't forget that we need to connect to the main
-# database. We could utilize '\connect' in the create/drop roles scripts.
-
-# Notice that we have to connect to the main database here.
-grant-privileges:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/3_grant_privileges.up.sql"
-.PHONY: create-privileges
-
-# Notice that we have to connect to the main database here.
-revoke-privileges:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/3_revoke_privileges.down.sql"
-.PHONY: drop-privileges
-
-# Notice that we have to connect to the main database here.
-enable-row-security:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/4_enable_row_security.up.sql"
-.PHONY: enable-row-security
-
-# Notice that we have to connect to the main database here.
-disable-row-security:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/4_disable_row_security.down.sql"
-.PHONY: disable-row-security
-
-# Notice that we have to connect to the main database here.
-create-policies:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/5_create_policies.up.sql"
-.PHONY: create-policies
-
-# Notice that we have to connect to the main database here.
-drop-policies:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/5_drop_policies.down.sql"
-.PHONY: drop-policies
-
 #
 # Fake data
 #
