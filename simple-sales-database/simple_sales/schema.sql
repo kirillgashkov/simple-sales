@@ -590,6 +590,62 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: cities_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX cities_name_idx ON public.cities USING btree (name);
+
+
+--
+-- Name: cities_region_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX cities_region_idx ON public.cities USING btree (region);
+
+
+--
+-- Name: clients_organization_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX clients_organization_name_idx ON public.clients USING btree (organization_name);
+
+
+--
+-- Name: contacts_email_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX contacts_email_idx ON public.contacts USING btree (email);
+
+
+--
+-- Name: contacts_first_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX contacts_first_name_idx ON public.contacts USING btree (first_name);
+
+
+--
+-- Name: contacts_last_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX contacts_last_name_idx ON public.contacts USING btree (last_name);
+
+
+--
+-- Name: contacts_middle_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX contacts_middle_name_idx ON public.contacts USING btree (middle_name);
+
+
+--
+-- Name: contacts_phone_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX contacts_phone_idx ON public.contacts USING btree (phone);
+
+
+--
 -- Name: contracts_products_product_serial_number_contract_number_idx; Type: INDEX; Schema: public; Owner: -
 --
 
