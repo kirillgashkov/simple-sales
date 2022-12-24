@@ -1,5 +1,10 @@
 BEGIN;
 
+ALTER TABLE tasks
+ENABLE ROW LEVEL SECURITY,
+FORCE ROW LEVEL SECURITY;  -- Apply row level security to table owners as well.
+
+
 --
 -- Role: "simple_sales_employee" (includes "simple_sales_manager" and "simple_sales_salesperson")
 --
