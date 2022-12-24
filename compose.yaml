@@ -8,10 +8,22 @@ services:
     # Development
     ports:
       - "5432:5432"
-  
+
+  db-cron:
+    build: ./database
+    env_file: database.compose.env
+    volumes:
+      - db-cron-logs:/var/log  # For /var/log/cron.log
+    depends_on:
+      - db
+
+    command: ["cron"]
+
   api:
     build: ./backend
     env_file: backend.compose.env
+    depends_on:
+      - db
     
     # Development
     ports:
@@ -19,3 +31,4 @@ services:
 
 volumes:
   db-data: {}
+  db-cron-logs: {}
