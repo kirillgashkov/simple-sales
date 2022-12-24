@@ -22,22 +22,6 @@ version:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" version
 .PHONY: version
 
-create-roles:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_roles.sql"
-.PHONY: create-roles
-
-drop-roles:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_roles.sql"
-.PHONY: drop-roles
-
-create-db:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_database.sql"
-.PHONY: create-db
-
-drop-db:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_database.sql"
-.PHONY: drop-db
-
 # Note: this dump doesn't include the migration version,
 # although it probably should.
 dump-db-schema:
@@ -98,6 +82,26 @@ connect-as-manager: connect-as-michael
 
 connect-as-salesperson: connect-as-dwight
 .PHONY: connect-as-salesperson
+
+#
+# Scripts
+#
+
+create-db:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_database.sql"
+.PHONY: create-db
+
+drop-db:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_database.sql"
+.PHONY: drop-db
+
+create-roles:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_roles.sql"
+.PHONY: create-roles
+
+drop-roles:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_roles.sql"
+.PHONY: drop-roles
 
 # These are temporary, probably will be merged with create/drop roles later.
 #
