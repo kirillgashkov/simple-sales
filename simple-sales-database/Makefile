@@ -88,19 +88,19 @@ connect-as-salesperson: connect-as-dwight
 #
 
 create-db:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_database.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/create_database.sql"
 .PHONY: create-db
 
 drop-db:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_database.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/drop_database.sql"
 .PHONY: drop-db
 
 create-roles:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/create_roles.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/create_roles.sql"
 .PHONY: create-roles
 
 drop-roles:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/drop_roles.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/drop_roles.sql"
 .PHONY: drop-roles
 
 # These are temporary, probably will be merged with create/drop roles later.
@@ -110,33 +110,37 @@ drop-roles:
 
 # Notice that we have to connect to the main database here.
 grant-privileges:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_grant_privileges.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/_grant_privileges.sql"
 .PHONY: create-privileges
 
 # Notice that we have to connect to the main database here.
 revoke-privileges:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_revoke_privileges.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/_revoke_privileges.sql"
 .PHONY: drop-privileges
 
 # Notice that we have to connect to the main database here.
 enable-row-security:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_enable_row_security.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/_enable_row_security.sql"
 .PHONY: enable-row-security
 
 # Notice that we have to connect to the main database here.
 disable-row-security:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_disable_row_security.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/_disable_row_security.sql"
 .PHONY: disable-row-security
 
 # Notice that we have to connect to the main database here.
 create-policies:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_create_policies.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/_create_policies.sql"
 .PHONY: create-policies
 
 # Notice that we have to connect to the main database here.
 drop-policies:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/_drop_policies.sql"
+	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -f - < "./simple_sales/scripts/_drop_policies.sql"
 .PHONY: drop-policies
+
+#
+# Fake data
+#
 
 generate-fake-data:
 	( cd simple_sales && python faker.py )
