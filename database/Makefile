@@ -28,18 +28,6 @@ version:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" version
 .PHONY: version
 
-migrate: _migrate dump-db-schema
-.PHONY: migrate
-
-rollback: _rollback dump-db-schema
-.PHONY: rollback
-
-down-all: _down-all dump-db-schema
-.PHONY: down-all
-
-force: _force dump-db-schema
-.PHONY: force
-
 connect-as-postgres-to-maintenance-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN"
 .PHONY: connect-as-postgres-to-maintenance-db
