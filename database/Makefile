@@ -1,3 +1,8 @@
+#
+# Migrations
+#
+
+
 # Note: this dump doesn't include the migration version,
 # although it probably should.
 dump-db-schema:
@@ -27,6 +32,12 @@ force:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" force -- $(V)
 .PHONY: force
 
+
+#
+# Connections
+#
+
+
 connect-as-postgres-to-maintenance-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN"
 .PHONY: connect-as-postgres-to-maintenance-db
@@ -35,9 +46,11 @@ connect-as-postgres:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN"
 .PHONY: connect-as-postgres
 
+
 #
 # Scripts
 #
+
 
 create-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/1_create_database.up.sql"
@@ -47,9 +60,11 @@ drop-db:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/1_drop_database.down.sql"
 .PHONY: drop-db
 
+
 #
 # Fake data
 #
+
 
 generate-fake-data:
 	( cd simple_sales && python faker.py )
