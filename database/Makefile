@@ -38,13 +38,13 @@ force:
 #
 
 
-connect-as-postgres-to-maintenance-db:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN"
-.PHONY: connect-as-postgres-to-maintenance-db
-
 connect-as-postgres:
 	psql -d "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN"
 .PHONY: connect-as-postgres
+
+connect-as-postgres-to-maintenance-db:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN"
+.PHONY: connect-as-postgres-to-maintenance-db
 
 
 #
