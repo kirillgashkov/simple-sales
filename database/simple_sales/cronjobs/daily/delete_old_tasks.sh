@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "$(date) Running 'delete_old_tasks.sh' cronjob..."
+echo "$(date) Running '$0' cronjob..."
 
 (
 set -e
@@ -11,4 +11,4 @@ psql -d "$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" <<EOF
 EOF
 )
 
-echo "$(date) Finished running 'delete_old_tasks.sh' cronjob."
+echo "$(date) Finished running '$0' cronjob."
