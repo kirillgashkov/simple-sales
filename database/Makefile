@@ -16,6 +16,9 @@ rollback: dump-db-schema
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" down 1
 .PHONY: rollback
 
+remigrate: rollback migrate
+.PHONY: remigrate
+
 force:
 	migrate -database "$$SIMPLE_SALES_DATABASE_MAIN_DB_DSN" -path "./simple_sales/migrations" force -- $(V)
 .PHONY: force
