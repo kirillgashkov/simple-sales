@@ -52,13 +52,13 @@ connect-as-postgres-to-maintenance-db:
 #
 
 
-create-db:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/1_create_database.up.sql"
-.PHONY: create-db
+create-database-and-roles:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f "simple_sales/scripts/create_database_and_roles.sql"
+.PHONY: create-database-and-roles
 
-drop-db:
-	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f - < "./simple_sales/scripts/1_drop_database.down.sql"
-.PHONY: drop-db
+drop-database-and-roles:
+	psql -d "$$SIMPLE_SALES_DATABASE_MAINTENANCE_DB_DSN" -f "simple_sales/scripts/drop_database_and_roles.sql"
+.PHONY: drop-database-and-roles
 
 
 #
