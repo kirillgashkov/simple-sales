@@ -6,3 +6,8 @@ fake_data.sql
 !.gitkeep
 !.gitignore
 !.dockerignore
+!.env.backend.compose
+!.env.backend.local
+!.env.database.compose
+!.env.database.local
+!.env.postgres.compose

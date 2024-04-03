@@ -1,19 +1,19 @@
-services:  
+services:
   db:
     image: postgres:15-alpine
-    env_file: postgres.compose.env
+    env_file: .env.postgres.compose
     volumes:
       - db-data:/var/lib/postgresql/data
-    
+
     # Development
     ports:
       - "5432:5432"
 
   db-cron:
     build: ./database
-    env_file: database.compose.env
+    env_file: .env.database.compose
     volumes:
-      - db-cron-logs:/var/log  # For /var/log/cron.log
+      - db-cron-logs:/var/log # For /var/log/cron.log
     depends_on:
       - db
 
@@ -21,10 +21,10 @@ services:
 
   api:
     build: ./backend
-    env_file: backend.compose.env
+    env_file: .env.backend.compose
     depends_on:
       - db
-    
+
     # Development
     ports:
       - "8000:8000"
