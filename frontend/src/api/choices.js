@@ -1,6 +1,5 @@
 import axios from "./axios";
-import { Employee } from "../api/models";
-
+import { Employee, EmployeeType, City } from "../api/models";
 
 export class Choice {
   constructor({ id, displayName }) {
@@ -9,9 +8,9 @@ export class Choice {
   }
 }
 
-
 export function getEmployeeTypeChoices() {
-  return axios.get("/employee-types")
+  return axios
+    .get("/employee-types")
     .then((response) => {
       return response.data.map((employeeTypeJson) => {
         const employeeType = new EmployeeType(employeeTypeJson);
@@ -37,9 +36,9 @@ export function getEmployeeTypeChoices() {
     });
 }
 
-
 export function getCityChoices() {
-  return axios.get("/cities")
+  return axios
+    .get("/cities")
     .then((response) => {
       return response.data.map((cityJson) => {
         const city = new City(cityJson);
@@ -62,11 +61,13 @@ export function getCityChoices() {
     });
 }
 
-
 export function getAssignTaskToEmployeeChoices() {
-  return axios.get("/employees?choices_for=assign_task_to")
+  return axios
+    .get("/employees?choices_for=assign_task_to")
     .then((response) => {
-      const employees = response.data.map((employeeJson) => new Employee(employeeJson));
+      const employees = response.data.map(
+        (employeeJson) => new Employee(employeeJson)
+      );
 
       const fullNameCounts = new Map();
       const fullNameCityCounts = new Map();
@@ -83,6 +84,8 @@ export function getAssignTaskToEmployeeChoices() {
       }
 
       function getFullNameCity(employee) {
+        const fullName = getFullName(employee);
+
         let fullNameCity;
         if (employee.city.region) {
           fullNameCity = `${fullName}, ${employee.city.name}, ${employee.city.region}`;
@@ -104,11 +107,14 @@ export function getAssignTaskToEmployeeChoices() {
         }
 
         if (fullNameCityCounts.has(fullNameCity)) {
-          fullNameCityCounts.set(fullNameCity, fullNameCityCounts.get(fullNameCity) + 1);
+          fullNameCityCounts.set(
+            fullNameCity,
+            fullNameCityCounts.get(fullNameCity) + 1
+          );
         } else {
           fullNameCityCounts.set(fullNameCity, 1);
         }
-      })
+      });
 
       return employees.map((employee) => {
         const fullName = getFullName(employee);
