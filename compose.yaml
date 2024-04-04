@@ -12,19 +12,26 @@ services:
   db-cron:
     build: ./database
     env_file: .env.database.compose
+    command: cron
     volumes:
       - db-cron-logs:/var/log # For /var/log/cron.log
     depends_on:
       - db
 
-    command: ["cron"]
+  db-migrate:
+    build: ./database
+    env_file: .env.database.compose
+    command: migrate
+    depends_on:
+      - db
 
   api:
     build: ./backend
     command: api
     env_file: .env.backend.compose
     depends_on:
-      - db
+      db-migrate:
+        condition: service_completed_successfully
 
     # Development
     ports:
