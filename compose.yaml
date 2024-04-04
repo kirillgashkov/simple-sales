@@ -21,6 +21,7 @@ services:
 
   api:
     build: ./backend
+    command: api
     env_file: .env.backend.compose
     depends_on:
       - db
