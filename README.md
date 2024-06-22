@@ -2,6 +2,8 @@
 
 A simple application for an imaginary sales department to manage their work.
 
+The development of this application took place in November - December 2022.
+
 ## Structure
 
 The application is split into three parts:
